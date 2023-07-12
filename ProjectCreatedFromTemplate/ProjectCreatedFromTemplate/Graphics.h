@@ -1,6 +1,7 @@
 #pragma once
 
-#include <SDL.h>
+#include <SDLMain.h>
+#include <SDL_image.h>
 #include <iostream> 
 
 namespace SDLFramework
@@ -16,6 +17,12 @@ namespace SDLFramework
         static bool Initialized();
         void ClearBackBuffer();
         void Render();
+        SDL_Texture* LoadTexture(std::string path);
+        void DrawTexture(SDL_Texture* tex, 
+            SDL_Rect* srcRect = nullptr, 
+            SDL_Rect* dstRect = nullptr, 
+            float angle = 0.0f, 
+            SDL_RendererFlip flip = SDL_FLIP_NONE);
 
     private:
         static Graphics* sInstance;
@@ -100,4 +107,41 @@ namespace SDLFramework
             return false;
         } return true;
     }
+
+    SDL_Texture* Graphics::LoadTexture(std::string path)
+    {
+        SDL_Texture* tex = nullptr;
+        SDL_Surface* surface = IMG_Load(path.c_str());
+
+        if (surface == nullptr)
+        {
+            std::cerr << "Unable to load " << path << ". IMG Error: "
+                << IMG_GetError() << std::endl;
+            return nullptr;
+        }
+        tex = SDL_CreateTextureFromSurface(mRenderer, surface);
+        if (tex == nullptr)
+        {
+            std::cerr << "Unable to create texture from surface! IMG Error: "
+                << IMG_GetError() << std::endl; SDL_FreeSurface(surface);
+            return nullptr;
+        }
+
+        SDL_FreeSurface(surface);
+        return tex;
+    }
+
+    void Graphics::DrawTexture(SDL_Texture* tex, 
+        SDL_Rect* srcRect, 
+        SDL_Rect* dstRect, 
+        float angle, 
+        SDL_RendererFlip flip) 
+    { 
+        SDL_RenderCopyEx(mRenderer, 
+            tex, 
+            srcRect, 
+            dstRect, 
+            angle, 
+            nullptr, 
+            flip); }
 }

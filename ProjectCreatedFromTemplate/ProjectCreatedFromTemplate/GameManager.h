@@ -3,6 +3,8 @@
 #include <Graphics.h> 
 #include <Timer.h>
 #include <GameEntity.h>
+#include <Texture.h>
+#include <AssetManager.h>
 
 namespace SDLFramework
 {
@@ -22,9 +24,10 @@ namespace SDLFramework
         const int FRAME_RATE = 60; 
         Timer* mTimer;
 
-        GameEntity* mParent; 
-        GameEntity* mChild;
-
+        //Test
+        AssetManager* mAssetManager;
+        Texture* mTex;
+        //End test
     public:
         static GameManager* Instance();
         static void Release();
@@ -96,34 +99,27 @@ namespace SDLFramework
     void GameManager::Render() 
     { 
         mGraphics->ClearBackBuffer();
+        mTex->Render();
         mGraphics->Render(); 
     }
 
     GameManager::GameManager() : mQuit(false)
-    { // create Graphics singleton 
+    { 
+        // create Graphics singleton 
         mEvent = {};
+        
         mGraphics = Graphics::Instance(); 
+        
         mTimer = Timer::Instance();
+        
         // verify Graphics module is ready 
         if (!Graphics::Initialized()) 
         { 
             mQuit = true; 
         } 
 
-        mParent = new GameEntity(100.0f, 400.0f); 
-        mChild = new GameEntity(100.0f, 500.0f);
-
-        printf("Child local pos: (%f, %f)\n", 
-            mChild->Position(GameEntity::Local).x, 
-            mChild->Position(GameEntity::Local).y); 
-        
-        // set parent of mChild to mParent 
-        mChild->Parent(mParent); 
-        
-        // print local position of mChild with parent set 
-        printf("Child local pos: (%f, %f)\n", 
-            mChild->Position(GameEntity::Local).x, 
-            mChild->Position(GameEntity::Local).y);
+        mAssetManager = AssetManager::Instance();
+        mTex = new Texture("SpriteSheet.png");
     }
 
     GameManager::~GameManager() 
@@ -134,6 +130,11 @@ namespace SDLFramework
         
         Timer::Release();
         mTimer = nullptr;
+
+        delete mTex; 
+        mTex = nullptr;
+
+        AssetManager::Release();
         
         // Quit SDL subsystems 
         SDL_Quit(); 

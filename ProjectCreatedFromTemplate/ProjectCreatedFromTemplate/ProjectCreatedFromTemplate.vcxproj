@@ -102,7 +102,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)SDL2\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"</Command>
+copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
+xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +126,8 @@ copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)ou
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)SDL2\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"</Command>
+copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
+xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -144,7 +146,8 @@ copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)ou
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)SDL2\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"</Command>
+copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
+xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,18 +170,21 @@ copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)ou
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)SDL2\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"</Command>
+copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
+xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SDLTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="SDLMain.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
