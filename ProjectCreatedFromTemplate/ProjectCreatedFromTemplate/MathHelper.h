@@ -33,24 +33,6 @@ namespace SDLFramework
         }
     };
 
-    inline Vector2 Lerp(const Vector2& start, const Vector2& end, float time)
-    {
-        if (time <= 0.0f)
-        {
-            return start;
-        }
-
-        if (time >= 1.0f)
-        {
-            return end;
-        }
-
-        Vector2 dir = (end - start).Normalized();
-        float mag = (end - start).Magnitude();
-
-        return start + ((dir * mag) * time);
-    }
-
     inline Vector2 operator+(const Vector2& lhs, const Vector2& rhs)
     {
         return Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -74,6 +56,24 @@ namespace SDLFramework
     inline float Dot(const Vector2& vec1, const Vector2& vec2)
     {
         return vec1.x * vec2.x + vec1.y * vec2.y;
+    }
+
+    inline Vector2 Lerp(const Vector2& start, const Vector2& end, float time)
+    {
+        if (time <= 0.0f)
+        {
+            return start;
+        }
+
+        if (time >= 1.0f)
+        {
+            return end;
+        }
+        Vector2 another = (end + start);
+        Vector2 dir = (end - start).Normalized();
+        float mag = (end - start).Magnitude();
+
+        return start + ((dir * mag) * time);
     }
 
     inline Vector2 RotateVector(const Vector2& vec, float angle)

@@ -87,7 +87,7 @@ namespace SDLFramework
 
     void GameManager::Update() 
     {
-        std::cout << "Delta time: " << mTimer->DeltaTime() << std::endl;
+        //std::cout << "Delta time: " << mTimer->DeltaTime() << std::endl;
     } 
     
     void GameManager::LateUpdate()
