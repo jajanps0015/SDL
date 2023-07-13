@@ -5,6 +5,7 @@
 #include <GameEntity.h>
 #include <Texture.h>
 #include <AssetManager.h>
+#include <InputManager.h>
 
 namespace SDLFramework
 {
@@ -18,14 +19,17 @@ namespace SDLFramework
         static GameManager* sInstance;
         // loop control 
         bool mQuit;
+        
         // modules 
         Graphics* mGraphics;
+        AssetManager* mAssetManager;
+        InputManager* mInputManager;
+
         SDL_Event mEvent;
-        const int FRAME_RATE = 60; 
+        const int FRAME_RATE = 60;
         Timer* mTimer;
 
         //Test
-        AssetManager* mAssetManager;
         Texture* mTex;
         //End test
     public:
@@ -61,14 +65,14 @@ namespace SDLFramework
     void GameManager::Run()
     { // main game loop 
         while (!mQuit)
-        { 
+        {
             mTimer->Update();
 
             if (mTimer->DeltaTime() >= 1.0f / FRAME_RATE)
-            { 
-                mTimer->Reset(); 
-                Update(); 
-                LateUpdate(); 
+            {
+                mTimer->Reset();
+                Update();
+                LateUpdate();
                 Render();
             }
 
@@ -88,55 +92,101 @@ namespace SDLFramework
         }
     }
 
-    void GameManager::Update() 
+    void GameManager::Update()
     {
-        //std::cout << "Delta time: " << mTimer->DeltaTime() << std::endl;
-    } 
-    
+        mInputManager->Update();
+
+        if (mInputManager->KeyDown(SDL_SCANCODE_A))
+        {
+            mTex->Translate(Vector2(-40, 0.0f) * mTimer->DeltaTime(),
+                GameEntity::World);
+        }
+        else if (mInputManager->KeyDown(SDL_SCANCODE_D))
+        {
+            mTex->Translate(Vector2(40, 0) * mTimer->DeltaTime(),
+                GameEntity::World);
+        }
+        if (mInputManager->KeyDown(SDL_SCANCODE_W)) 
+        { 
+            mTex->Translate(Vector2(0, -40.0f) * mTimer->DeltaTime(), 
+                GameEntity::World); 
+        }
+        else if (mInputManager->KeyDown(SDL_SCANCODE_S)) 
+        { 
+            mTex->Translate(Vector2(0, 40.0f) * mTimer->DeltaTime(), 
+                GameEntity::World); 
+        } 
+        if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE)) 
+        { 
+            std::cout << "Space pressed!" << std::endl; 
+        } 
+        if (mInputManager->KeyReleased(SDL_SCANCODE_SPACE)) 
+        { 
+            std::cout << "Space released!" << std::endl; 
+        } 
+        if (mInputManager->MouseButtonPressed(InputManager::Left)) 
+        { 
+            std::cout << "Left mouse button pressed!" << std::endl; 
+        } 
+        if (mInputManager->MouseButtonReleased(InputManager::Left)) 
+        { 
+            std::cout << "Left mouse button released!" << std::endl; 
+        }
+    }
+
     void GameManager::LateUpdate()
-    { } 
-    
-    void GameManager::Render() 
-    { 
+    {
+        mInputManager->UpdatePrevInput();
+    }
+
+    void GameManager::Render()
+    {
         mGraphics->ClearBackBuffer();
         mTex->Render();
-        mGraphics->Render(); 
+        mGraphics->Render();
     }
 
     GameManager::GameManager() : mQuit(false)
-    { 
+    {
         // create Graphics singleton 
         mEvent = {};
+
+        mGraphics = Graphics::Instance();
+
+        mTimer = Timer::Instance(); 
         
-        mGraphics = Graphics::Instance(); 
-        
-        mTimer = Timer::Instance();
-        
+        mInputManager = InputManager::Instance();
+
         // verify Graphics module is ready 
-        if (!Graphics::Initialized()) 
-        { 
-            mQuit = true; 
-        } 
+        if (!Graphics::Initialized())
+        {
+            mQuit = true;
+        }
 
         mAssetManager = AssetManager::Instance();
         mTex = new Texture("SpriteSheet.png");
+        
     }
 
-    GameManager::~GameManager() 
+    GameManager::~GameManager()
     {
         // release modules 
-        Graphics::Release(); 
+        Graphics::Release();
         mGraphics = nullptr;
-        
+
         Timer::Release();
         mTimer = nullptr;
 
-        delete mTex; 
+        delete mTex;
         mTex = nullptr;
 
         AssetManager::Release();
-        
+        mAssetManager = nullptr;
+
+        InputManager::Release(); 
+        mInputManager = nullptr;
+
         // Quit SDL subsystems 
-        SDL_Quit(); 
+        SDL_Quit();
     }
 }
