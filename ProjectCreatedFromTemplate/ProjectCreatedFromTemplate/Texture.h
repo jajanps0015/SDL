@@ -25,7 +25,15 @@ namespace SDLFramework
         Texture(std::string filename,
             int x, int y, int w, int h,
             bool managed = false);
+
+        Texture(std::string text,
+            std::string fontPath,
+            int size,
+            SDL_Color color,
+            bool managed = false);
+
         ~Texture();
+
         Vector2 ScaledDimensions();
         void SetSourceRect(SDL_Rect* sourceRect);
         void Render() override;
@@ -63,39 +71,57 @@ namespace SDLFramework
         mSourceRect.h = mHeight;
     }
 
-    Texture::~Texture() 
-    { 
-        AssetManager::Instance()->DestroyTexture(mTex); 
-        mTex = nullptr; 
-        mGraphics = nullptr; 
+    Texture::Texture(std::string text,
+        std::string fontPath,
+        int size, SDL_Color color,
+        bool managed)
+    {
+        mGraphics = Graphics::Instance();
+
+        mTex = AssetManager::Instance()->
+            GetText(text, fontPath, size, color, managed);
+
+        mClipped = false;
+
+        SDL_QueryTexture(mTex, nullptr, nullptr, &mWidth, &mHeight);
+
+        mDestinationRect.w = mWidth;
+        mDestinationRect.h = mHeight;
     }
 
-    Vector2 Texture::ScaledDimensions() 
-    { 
-        Vector2 scaledDimensions = Scale(); 
-        scaledDimensions.x *= mWidth; 
-        scaledDimensions.y *= mHeight; 
-        
-        return scaledDimensions; 
+    Texture::~Texture()
+    {
+        AssetManager::Instance()->DestroyTexture(mTex);
+        mTex = nullptr;
+        mGraphics = nullptr;
     }
 
-    void Texture::SetSourceRect(SDL_Rect* sourceRect) 
-    { 
-        mSourceRect = *sourceRect; 
+    Vector2 Texture::ScaledDimensions()
+    {
+        Vector2 scaledDimensions = Scale();
+        scaledDimensions.x *= mWidth;
+        scaledDimensions.y *= mHeight;
+
+        return scaledDimensions;
     }
 
-    void Texture::Render() 
-    { 
-        Vector2 pos = Position(World); 
-        Vector2 scale = Scale(World); 
-        mDestinationRect.x = (int)(pos.x - mWidth * 0.5f); 
-        mDestinationRect.y = (int)(pos.y - mHeight * 0.5f); 
-        mDestinationRect.w = (int)(mWidth * scale.x); 
-        mDestinationRect.h = (int)(mHeight * scale.y); 
+    void Texture::SetSourceRect(SDL_Rect* sourceRect)
+    {
+        mSourceRect = *sourceRect;
+    }
 
-        mGraphics->DrawTexture(mTex, 
-            mClipped ? &mSourceRect : nullptr, 
-            &mDestinationRect, 
+    void Texture::Render()
+    {
+        Vector2 pos = Position(World);
+        Vector2 scale = Scale(World);
+        mDestinationRect.x = (int)(pos.x - mWidth * 0.5f);
+        mDestinationRect.y = (int)(pos.y - mHeight * 0.5f);
+        mDestinationRect.w = (int)(mWidth * scale.x);
+        mDestinationRect.h = (int)(mHeight * scale.y);
+
+        mGraphics->DrawTexture(mTex,
+            mClipped ? &mSourceRect : nullptr,
+            &mDestinationRect,
             Rotation(World));
     }
 }

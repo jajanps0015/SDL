@@ -32,6 +32,7 @@ namespace SDLFramework
 
         //Test
         Texture* mTex;
+        Texture* mFontTex;
         //End test
     public:
         static GameManager* Instance();
@@ -150,7 +151,8 @@ namespace SDLFramework
     void GameManager::Render()
     {
         mGraphics->ClearBackBuffer();
-        mTex->Render();
+        mTex->Render(); 
+        mFontTex->Render();
         mGraphics->Render();
     }
 
@@ -166,7 +168,13 @@ namespace SDLFramework
             AnimDir::Horizontal); //frame layout ...
 
         mTex->Position(Graphics::Instance()->SCREEN_WIDTH / 2,
-            Graphics::Instance()->SCREEN_WIDTH / 2);
+            Graphics::Instance()->SCREEN_HEIGHT / 2);
+
+        mFontTex = new Texture("Hello World!", 
+            "waltdisney.ttf", 
+            25, 
+            { 0, 255, 0 }); 
+        mFontTex->Position(Vector2(400, 200));
     }
 
     GameManager::GameManager() : mQuit(false)
@@ -187,6 +195,7 @@ namespace SDLFramework
         }
 
         mAssetManager = AssetManager::Instance();
+        
         TestStuff();
     }
 
