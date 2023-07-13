@@ -6,6 +6,7 @@
 #include <Texture.h>
 #include <AssetManager.h>
 #include <InputManager.h>
+#include <AnimatedTexture.h>
 
 namespace SDLFramework
 {
@@ -40,6 +41,8 @@ namespace SDLFramework
         void Update();
         void LateUpdate();
         void Render();
+
+        void TestStuff();
 
         GameManager();
         ~GameManager();
@@ -106,31 +109,36 @@ namespace SDLFramework
             mTex->Translate(Vector2(40, 0) * mTimer->DeltaTime(),
                 GameEntity::World);
         }
-        if (mInputManager->KeyDown(SDL_SCANCODE_W)) 
-        { 
-            mTex->Translate(Vector2(0, -40.0f) * mTimer->DeltaTime(), 
-                GameEntity::World); 
+        if (mInputManager->KeyDown(SDL_SCANCODE_W))
+        {
+            mTex->Translate(Vector2(0, -40.0f) * mTimer->DeltaTime(),
+                GameEntity::World);
         }
-        else if (mInputManager->KeyDown(SDL_SCANCODE_S)) 
-        { 
-            mTex->Translate(Vector2(0, 40.0f) * mTimer->DeltaTime(), 
-                GameEntity::World); 
-        } 
-        if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE)) 
-        { 
-            std::cout << "Space pressed!" << std::endl; 
-        } 
-        if (mInputManager->KeyReleased(SDL_SCANCODE_SPACE)) 
-        { 
-            std::cout << "Space released!" << std::endl; 
-        } 
-        if (mInputManager->MouseButtonPressed(InputManager::Left)) 
-        { 
-            std::cout << "Left mouse button pressed!" << std::endl; 
-        } 
-        if (mInputManager->MouseButtonReleased(InputManager::Left)) 
-        { 
-            std::cout << "Left mouse button released!" << std::endl; 
+        else if (mInputManager->KeyDown(SDL_SCANCODE_S))
+        {
+            mTex->Translate(Vector2(0, 40.0f) * mTimer->DeltaTime(),
+                GameEntity::World);
+        }
+        if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE))
+        {
+            std::cout << "Space pressed!" << std::endl;
+        }
+        if (mInputManager->KeyReleased(SDL_SCANCODE_SPACE))
+        {
+            std::cout << "Space released!" << std::endl;
+        }
+        if (mInputManager->MouseButtonPressed(InputManager::Left))
+        {
+            std::cout << "Left mouse button pressed!" << std::endl;
+        }
+        if (mInputManager->MouseButtonReleased(InputManager::Left))
+        {
+            std::cout << "Left mouse button released!" << std::endl;
+        }
+
+        if (mTex != nullptr)
+        {
+            mTex->Update();
         }
     }
 
@@ -144,6 +152,21 @@ namespace SDLFramework
         mGraphics->ClearBackBuffer();
         mTex->Render();
         mGraphics->Render();
+    }
+
+    void GameManager::TestStuff()
+    {
+        mTex = new AnimatedTexture("Sprite2.png", // filename 
+            0, // x clip 
+            0, // y clip 
+            480/5, // clip w 
+            768/8, // clip h 
+            40, // total frames 
+            1, // animation length in second 
+            AnimDir::Horizontal); //frame layout ...
+
+        mTex->Position(Graphics::Instance()->SCREEN_WIDTH / 2,
+            Graphics::Instance()->SCREEN_WIDTH / 2);
     }
 
     GameManager::GameManager() : mQuit(false)
@@ -164,8 +187,7 @@ namespace SDLFramework
         }
 
         mAssetManager = AssetManager::Instance();
-        mTex = new Texture("SpriteSheet.png");
-        
+        TestStuff();
     }
 
     GameManager::~GameManager()

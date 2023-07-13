@@ -11,10 +11,13 @@ namespace SDLFramework
         SDL_Texture* mTex;
         Graphics* mGraphics;
 
-        int mWidth; int mHeight;
         bool mClipped;
+
+    protected:
+
         SDL_Rect mSourceRect;
         SDL_Rect mDestinationRect;
+        int mWidth; int mHeight;
 
     public:
         Texture(std::string filename, bool managed = false);
