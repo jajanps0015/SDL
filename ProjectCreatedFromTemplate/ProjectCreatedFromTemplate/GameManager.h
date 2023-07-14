@@ -7,6 +7,7 @@
 #include <AssetManager.h>
 #include <InputManager.h>
 #include <AnimatedTexture.h>
+#include <AudioManager.h>
 
 namespace SDLFramework
 {
@@ -25,6 +26,7 @@ namespace SDLFramework
         Graphics* mGraphics;
         AssetManager* mAssetManager;
         InputManager* mInputManager;
+        AudioManager* mAudioManager;
 
         SDL_Event mEvent;
         const int FRAME_RATE = 60;
@@ -137,6 +139,11 @@ namespace SDLFramework
             std::cout << "Left mouse button released!" << std::endl;
         }
 
+        if (mInputManager->KeyDown(SDL_SCANCODE_1)) 
+        { 
+            mAudioManager->PlaySFX("bling.wav", 0, -1); 
+        }
+
         if (mTex != nullptr)
         {
             mTex->Update();
@@ -183,18 +190,16 @@ namespace SDLFramework
         mEvent = {};
 
         mGraphics = Graphics::Instance();
-
-        mTimer = Timer::Instance(); 
-        
-        mInputManager = InputManager::Instance();
+        mTimer = Timer::Instance();         
+        mInputManager = InputManager::Instance(); 
+        mAudioManager = AudioManager::Instance();
+        mAssetManager = AssetManager::Instance();
 
         // verify Graphics module is ready 
         if (!Graphics::Initialized())
         {
             mQuit = true;
         }
-
-        mAssetManager = AssetManager::Instance();
         
         TestStuff();
     }
@@ -215,7 +220,10 @@ namespace SDLFramework
         mAssetManager = nullptr;
 
         InputManager::Release(); 
-        mInputManager = nullptr;
+        mInputManager = nullptr; 
+        
+        AudioManager::Release();
+        mAudioManager = nullptr;
 
         // Quit SDL subsystems 
         SDL_Quit();
