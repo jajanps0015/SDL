@@ -8,6 +8,9 @@
 #include <InputManager.h>
 #include <AnimatedTexture.h>
 #include <AudioManager.h>
+#include <galaga/StartScreen.h>
+
+using namespace Galaga;
 
 namespace SDLFramework
 {
@@ -35,6 +38,7 @@ namespace SDLFramework
         //Test
         Texture* mTex;
         Texture* mFontTex;
+        StartScreen* mStartScreen;
         //End test
     public:
         static GameManager* Instance();
@@ -102,6 +106,8 @@ namespace SDLFramework
     {
         mInputManager->Update();
 
+        mStartScreen->Update();
+
         if (mInputManager->KeyDown(SDL_SCANCODE_A))
         {
             mTex->Translate(Vector2(-40, 0.0f) * mTimer->DeltaTime(),
@@ -158,8 +164,11 @@ namespace SDLFramework
     void GameManager::Render()
     {
         mGraphics->ClearBackBuffer();
+        
         mTex->Render(); 
-        mFontTex->Render();
+        mFontTex->Render(); 
+        mStartScreen->Render();
+        
         mGraphics->Render();
     }
 
@@ -182,6 +191,8 @@ namespace SDLFramework
             25, 
             { 0, 255, 0 }); 
         mFontTex->Position(Vector2(400, 200));
+
+        mStartScreen = new StartScreen();
     }
 
     GameManager::GameManager() : mQuit(false)
@@ -214,7 +225,10 @@ namespace SDLFramework
         mTimer = nullptr;
 
         delete mTex;
-        mTex = nullptr;
+        mTex = nullptr; 
+        
+        delete mStartScreen; 
+        mStartScreen = nullptr;
 
         AssetManager::Release();
         mAssetManager = nullptr;
