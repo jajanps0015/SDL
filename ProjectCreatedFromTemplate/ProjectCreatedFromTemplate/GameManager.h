@@ -9,6 +9,7 @@
 #include <AnimatedTexture.h>
 #include <AudioManager.h>
 #include <galaga/StartScreen.h>
+#include <galaga/BackgroundStars.h>
 
 using namespace Galaga;
 
@@ -36,6 +37,7 @@ namespace SDLFramework
         Timer* mTimer;
 
         //Test
+        BackgroundStars* mStars;
         StartScreen* mStartScreen;
         //End test
     public:
@@ -105,7 +107,7 @@ namespace SDLFramework
         mInputManager->Update();
 
         mStartScreen->Update();
-
+        mStars->Update();
         
         if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE))
         {
@@ -139,13 +141,15 @@ namespace SDLFramework
     {
         mGraphics->ClearBackBuffer();
         
-        mStartScreen->Render();
+        mStartScreen->Render(); 
+        mStars->Render();;
         
         mGraphics->Render();
     }
 
     void GameManager::TestStuff()
     {
+        mStars = BackgroundStars::Instance();
         mStartScreen = new StartScreen();
     }
 
@@ -172,6 +176,9 @@ namespace SDLFramework
     GameManager::~GameManager()
     {
         // release modules 
+        BackgroundStars::Release();
+        mStars = nullptr;
+
         Graphics::Release();
         mGraphics = nullptr;
 
