@@ -3,6 +3,7 @@
 #include <AnimatedTexture.h>
 #include <GameEntity.h>
 #include <InputManager.h> 
+#include <galaga/Scoreboard.h>
 
 using namespace SDLFramework;
 namespace Galaga
@@ -42,6 +43,10 @@ namespace Galaga
         Vector2 mCursorStartPos;
         Vector2 mCursorOffset;
         int mSelectedMode;
+
+        Scoreboard* mPlayerOneScore; 
+        Scoreboard* mPlayerTwoScore; 
+        Scoreboard* mTopScore;
 
     public:
         StartScreen();
@@ -119,7 +124,7 @@ namespace Galaga
         mLogo = new Texture("galaga.png");
         mLogo->Parent(this);
         mLogo->Position(mPlayModes->Position(World) - Vector2(0, 100));
-        //mLogo->Scale(Vector2(0.4f, 0.4f));
+        mLogo->Scale(Vector2(0.4f, 0.4f));
 
         mAnimationStartPos = Vector2(0.0f, Graphics::SCREEN_HEIGHT);
         mAnimationEndPos = Vec2_Zero;
@@ -130,6 +135,24 @@ namespace Galaga
         mCursorStartPos = mCursor->Position(Local);
         mCursorOffset = Vector2(0.0f, 70.0f);
         mSelectedMode = 0;
+
+        //**************************************************************
+        // top bar entities ... 
+        mPlayerOneScore = new Scoreboard(); 
+        mPlayerTwoScore = new Scoreboard(); 
+        mTopScore = new Scoreboard(); 
+        
+        mPlayerOneScore->Parent(mTopBar); 
+        mPlayerTwoScore->Parent(mTopBar); 
+        mTopScore->Parent(mTopBar);
+        
+        mPlayerOneScore->Position(mPlayerOne->Position(World) + Vector2(0,80));
+        mPlayerTwoScore->Position(mPlayerTwo->Position(World) + Vector2(0, 80));
+        mTopScore->Position(Graphics::SCREEN_WIDTH * 0.05f, 40.0f); 
+
+        mPlayerOneScore->Score(0);
+        mPlayerTwoScore->Score(0);
+        mTopScore->Score(645987);
     }
 
     StartScreen::~StartScreen()
@@ -177,6 +200,15 @@ namespace Galaga
         delete mLogo;
         mLogo = nullptr;
 
+        delete mPlayerOneScore; 
+        mPlayerOneScore = nullptr; 
+        
+        delete mPlayerTwoScore; 
+        mPlayerTwoScore = nullptr; 
+        
+        delete mTopScore; 
+        mTopScore = nullptr;
+
         mTimer = nullptr;
         mInput = nullptr;
     }
@@ -220,7 +252,6 @@ namespace Galaga
         mPlayerTwo->Render();
         mHiScore->Render();
 
-
         mOnePlayerMode->Render();
         mTwoPlayerMode->Render();
         mCursor->Render();
@@ -230,6 +261,10 @@ namespace Galaga
         mRights->Render();
 
         mLogo->Render();
+
+        mPlayerOneScore->Render(); 
+        mPlayerTwoScore->Render(); 
+        mTopScore->Render();
     }
 
     void StartScreen::ChangeSelectedMode(int change)
