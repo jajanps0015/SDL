@@ -66,9 +66,9 @@ namespace Galaga
         //empty holder
         mTopBar = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f, 80.0f);
 
-        mPlayerOne = new Texture("1UP", "waltdisney.ttf", 32, { 200, 0, 0 });
-        mPlayerTwo = new Texture("2UP", "waltdisney.ttf", 32, { 200, 0, 0 });
-        mHiScore = new Texture("HI SCORE", "waltdisney.ttf", 32, { 200, 0, 0 });
+        mPlayerOne = new Texture("1UP", "emulogic.ttf", 32, { 200, 0, 0 });
+        mPlayerTwo = new Texture("2UP", "emulogic.ttf", 32, { 200, 0, 0 });
+        mHiScore = new Texture("HI SCORE", "emulogic.ttf", 32, { 200, 0, 0 });
 
         mTopBar->Parent(this);
 
@@ -84,8 +84,8 @@ namespace Galaga
 
         mPlayModes = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f,
             Graphics::SCREEN_HEIGHT * 0.55f);
-        mOnePlayerMode = new Texture("1 Player ", "waltdisney.ttf", 32, { 230, 230, 230 });
-        mTwoPlayerMode = new Texture("2 Players", "waltdisney.ttf", 32, { 230, 230, 230 });
+        mOnePlayerMode = new Texture("1 Player ", "emulogic.ttf", 32, { 230, 230, 230 });
+        mTwoPlayerMode = new Texture("2 Players", "emulogic.ttf", 32, { 230, 230, 230 });
         mCursor = new Texture("Cursor.png");
 
         mPlayModes->Parent(this);
@@ -107,8 +107,8 @@ namespace Galaga
             Graphics::SCREEN_HEIGHT * 0.7f);
 
         mNamco = new Texture("namcot", "namco__.ttf", 36, { 200, 0, 0 });
-        mDates = new Texture("1981 1985 NAMCO LTD.", "waltdisney.ttf", 32, { 230, 230, 230 });
-        mRights = new Texture("ALL RIGHTS RESERVED", "waltdisney.ttf", 32, { 230, 230, 230 });
+        mDates = new Texture("1981 1985 NAMCO LTD.", "emulogic.ttf", 32, { 230, 230, 230 });
+        mRights = new Texture("ALL RIGHTS RESERVED", "emulogic.ttf", 32, { 230, 230, 230 });
 
         mBottomBar->Parent(this);
 
@@ -121,7 +121,7 @@ namespace Galaga
         mRights->Position(0.0f, 170.0f);
 
         //*******************************************************************
-        mLogo = new Texture("galaga.png");
+        mLogo = new Texture("GalagaLogo.png");
         mLogo->Parent(this);
         mLogo->Position(mPlayModes->Position(World) - Vector2(0, 100));
         mLogo->Scale(Vector2(0.4f, 0.4f));

@@ -44,7 +44,7 @@ namespace Galaga
         { 
             for (int i = 0; i < 2; i++) 
             { 
-                mScore.push_back(new Texture("0", "waltdisney.ttf", size, mColor));
+                mScore.push_back(new Texture("0", "emulogic.ttf", size, mColor));
                 mScore[i]->Parent(this); 
                 mScore[i]->Position(Vector2(-size * i, 0.0f));
             } 
@@ -57,7 +57,7 @@ namespace Galaga
             
             for (unsigned i = 0; i <= lastIndex; i++) 
             { 
-                mScore.push_back(new Texture(str.substr(i, 1), "waltdisney.ttf", size, mColor));
+                mScore.push_back(new Texture(str.substr(i, 1), "emulogic.ttf", size, mColor));
                 mScore[i]->Parent(this); 
                 
                 mScore[i]->Position(Vector2(-size * (lastIndex - i), 0.0f));
