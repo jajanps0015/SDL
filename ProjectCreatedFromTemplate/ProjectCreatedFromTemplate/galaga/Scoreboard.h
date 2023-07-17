@@ -13,6 +13,7 @@ namespace Galaga
         std::vector<Texture*> mScore;
         SDL_Color mColor;
         void ClearBoard();
+        const float size = 32;
 
     public:
         Scoreboard();
@@ -43,9 +44,9 @@ namespace Galaga
         { 
             for (int i = 0; i < 2; i++) 
             { 
-                mScore.push_back(new Texture("0", "waltdisney.ttf", 32, mColor)); 
+                mScore.push_back(new Texture("0", "waltdisney.ttf", size, mColor));
                 mScore[i]->Parent(this); 
-                mScore[i]->Position(Vector2(-32.0f * i, 0.0f)); 
+                mScore[i]->Position(Vector2(-size * i, 0.0f));
             } 
         }
         else 
@@ -54,13 +55,12 @@ namespace Galaga
             
             unsigned lastIndex = (unsigned)str.length() - 1; 
             
-            //78900
             for (unsigned i = 0; i <= lastIndex; i++) 
             { 
-                mScore.push_back(new Texture(str.substr(i, 1), "waltdisney.ttf", 32, mColor)); 
+                mScore.push_back(new Texture(str.substr(i, 1), "waltdisney.ttf", size, mColor));
                 mScore[i]->Parent(this); 
                 
-                mScore[i]->Position(Vector2(-32.0f * (lastIndex - i), 0.0f)); 
+                mScore[i]->Position(Vector2(-size * (lastIndex - i), 0.0f));
             } 
         }
     }

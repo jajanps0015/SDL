@@ -142,13 +142,13 @@ namespace Galaga
         mPlayerTwoScore = new Scoreboard(); 
         mTopScore = new Scoreboard(); 
         
-        mPlayerOneScore->Parent(mTopBar); 
-        mPlayerTwoScore->Parent(mTopBar); 
-        mTopScore->Parent(mTopBar);
+        mPlayerOneScore->Parent(mPlayerOne); 
+        mPlayerTwoScore->Parent(mPlayerTwo); 
+        mTopScore->Parent(mHiScore);
         
         mPlayerOneScore->Position(mPlayerOne->Position(World) + Vector2(0,80));
         mPlayerTwoScore->Position(mPlayerTwo->Position(World) + Vector2(0, 80));
-        mTopScore->Position(Graphics::SCREEN_WIDTH * 0.05f, 40.0f); 
+        mTopScore->Position(mHiScore->Position(World) + Vector2(0, 80));
 
         mPlayerOneScore->Score(0);
         mPlayerTwoScore->Score(0);
@@ -247,7 +247,6 @@ namespace Galaga
 
     void StartScreen::Render()
     {
-
         mPlayerOne->Render();
         mPlayerTwo->Render();
         mHiScore->Render();
