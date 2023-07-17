@@ -13,68 +13,236 @@ namespace Galaga
         Timer* mTimer;
         InputManager* mInput;
 
-        GameEntity* mTopBar; 
-        Texture* mPlayerOne; 
-        Texture* mPlayerTwo; 
+        GameEntity* mTopBar;
+        Texture* mPlayerOne;
+        Texture* mPlayerTwo;
         Texture* mHiScore;
 
-    public: 
-        StartScreen(); 
-        ~StartScreen(); 
+        // Play Mode Entities 
+        GameEntity* mPlayModes;
+        Texture* mOnePlayerMode;
+        Texture* mTwoPlayerMode;
+        Texture* mCursor;
 
-        void Update() override; 
+        // Bottom Bar Entities 
+        GameEntity* mBottomBar;
+        Texture* mNamco;
+        Texture* mDates;
+        Texture* mRights;
+
+        Texture* mLogo;
+
+        Vector2 mAnimationStartPos;
+        Vector2 mAnimationEndPos;
+        float mAnimationTotalTime;
+        float mAnimationTimer;
+        bool mAnimationDone;
+
+        // Play Mode Entities ... 
+        Vector2 mCursorStartPos;
+        Vector2 mCursorOffset;
+        int mSelectedMode;
+
+    public:
+        StartScreen();
+        ~StartScreen();
+
+        void ChangeSelectedMode(int change);
+
+        void Update() override;
         void Render() override;
     };
 
-    StartScreen::StartScreen() 
-    { 
-        mTimer = Timer::Instance(); 
-        mInput = InputManager::Instance(); 
+    StartScreen::StartScreen()
+    {
+        mTimer = Timer::Instance();
+        mInput = InputManager::Instance();
 
         //empty holder
-        mTopBar = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f, 80.0f); 
-        
-        mPlayerOne = new Texture("1UP", "waltdisney.ttf", 32, { 200, 0, 0 }); 
-        mPlayerTwo = new Texture("2UP", "waltdisney.ttf", 32, { 200, 0, 0 }); 
+        mTopBar = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f, 80.0f);
+
+        mPlayerOne = new Texture("1UP", "waltdisney.ttf", 32, { 200, 0, 0 });
+        mPlayerTwo = new Texture("2UP", "waltdisney.ttf", 32, { 200, 0, 0 });
         mHiScore = new Texture("HI SCORE", "waltdisney.ttf", 32, { 200, 0, 0 });
 
-        mTopBar->Parent(this); 
-        
-        mPlayerOne->Parent(mTopBar); 
-        mPlayerTwo->Parent(mTopBar); 
+        mTopBar->Parent(this);
+
+        mPlayerOne->Parent(mTopBar);
+        mPlayerTwo->Parent(mTopBar);
         mHiScore->Parent(mTopBar);
 
-        mPlayerOne->Position(-Graphics::SCREEN_WIDTH * 0.35f, 0.0f); 
-        mPlayerTwo->Position(Graphics::SCREEN_WIDTH * 0.2f, 0.0f); 
+        mPlayerOne->Position(-Graphics::SCREEN_WIDTH * 0.35f, 0.0f);
+        mPlayerTwo->Position(Graphics::SCREEN_WIDTH * 0.2f, 0.0f);
         mHiScore->Position(-30.0f, 0.0f);
 
-        //mTopBar->Position(Graphics::SCREEN_WIDTH * 0.5f, Graphics::SCREEN_HEIGHT * 0.5f);
+        //***********************************************************
+
+        mPlayModes = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f,
+            Graphics::SCREEN_HEIGHT * 0.55f);
+        mOnePlayerMode = new Texture("1 Player ", "waltdisney.ttf", 32, { 230, 230, 230 });
+        mTwoPlayerMode = new Texture("2 Players", "waltdisney.ttf", 32, { 230, 230, 230 });
+        mCursor = new Texture("Cursor.png");
+
+        mPlayModes->Parent(this);
+
+        mOnePlayerMode->Parent(mPlayModes);
+        mTwoPlayerMode->Parent(mPlayModes);
+        mCursor->Parent(mPlayModes);
+
+        mOnePlayerMode->Position(0.0f, -35.0f);
+        mTwoPlayerMode->Position(0.0f, 35.0f);
+        mCursor->Position(-175.0f, -35.0f);
+
+        mCursor->Scale(Vector2(0.05, 0.05));
+        mCursor->Position(mOnePlayerMode->Position(World) - Vector2(300, 85));
+
+        //*****************************************************************8
+
+        mBottomBar = new GameEntity(Graphics::SCREEN_WIDTH * 0.5f,
+            Graphics::SCREEN_HEIGHT * 0.7f);
+
+        mNamco = new Texture("namcot", "namco__.ttf", 36, { 200, 0, 0 });
+        mDates = new Texture("1981 1985 NAMCO LTD.", "waltdisney.ttf", 32, { 230, 230, 230 });
+        mRights = new Texture("ALL RIGHTS RESERVED", "waltdisney.ttf", 32, { 230, 230, 230 });
+
+        mBottomBar->Parent(this);
+
+        mNamco->Parent(mBottomBar);
+        mDates->Parent(mBottomBar);
+        mRights->Parent(mBottomBar);
+
+        mNamco->Position(Vec2_Zero);
+        mDates->Position(0.0f, 90.0f);
+        mRights->Position(0.0f, 170.0f);
+
+        //*******************************************************************
+        mLogo = new Texture("galaga.png");
+        mLogo->Parent(this);
+        mLogo->Position(mPlayModes->Position(World) - Vector2(0, 100));
+        //mLogo->Scale(Vector2(0.4f, 0.4f));
+
+        mAnimationStartPos = Vector2(0.0f, Graphics::SCREEN_HEIGHT);
+        mAnimationEndPos = Vec2_Zero;
+        mAnimationTotalTime = 5.0f;
+        mAnimationTimer = 0.0f;
+        mAnimationDone = false;
+
+        mCursorStartPos = mCursor->Position(Local);
+        mCursorOffset = Vector2(0.0f, 70.0f);
+        mSelectedMode = 0;
     }
 
-    StartScreen::~StartScreen() 
-    { 
+    StartScreen::~StartScreen()
+    {
         // top bar entities 
-        delete mTopBar; 
-        mTopBar = nullptr; 
-        
-        delete mPlayerOne; 
-        mPlayerOne = nullptr; 
-        
-        delete mPlayerTwo; 
-        mPlayerTwo = nullptr; 
+        delete mTopBar;
+        mTopBar = nullptr;
 
-        delete mHiScore; 
+        delete mPlayerOne;
+        mPlayerOne = nullptr;
 
-        mTimer = nullptr;         
-        mInput = nullptr; 
+        delete mPlayerTwo;
+        mPlayerTwo = nullptr;
+
+        delete mHiScore;
+        mHiScore = nullptr;
+
+        // play mode entities 
+        delete mPlayModes;
+        mPlayModes = nullptr;
+
+        delete mOnePlayerMode;
+        mOnePlayerMode = nullptr;
+
+        delete mTwoPlayerMode;
+        mTwoPlayerMode = nullptr;
+
+        delete mCursor;
+        mCursor = nullptr;
+
+        // bottom bar entities 
+        delete mBottomBar;
+        mBottomBar = nullptr;
+
+        delete mNamco;
+        mNamco = nullptr;
+
+        delete mDates;
+        mDates = nullptr;
+
+        delete mRights;
+        mRights = nullptr;
+
+        // logo entities 
+        delete mLogo;
+        mLogo = nullptr;
+
+        mTimer = nullptr;
+        mInput = nullptr;
     }
 
-    void StartScreen::Update() { } 
-    
-    void StartScreen::Render() 
-    { 
-        mPlayerOne->Render(); 
-        mPlayerTwo->Render(); 
+    void StartScreen::Update()
+    {
+        if (mAnimationDone)
+        {
+            if (mInput->KeyPressed(SDL_SCANCODE_DOWN)) 
+            { 
+                ChangeSelectedMode(1); 
+            }
+            else if (mInput->KeyPressed(SDL_SCANCODE_UP)) 
+            { 
+                ChangeSelectedMode(-1); 
+            }
+        }
+        else if (mInput->KeyPressed(SDL_SCANCODE_DOWN) || mInput->KeyPressed(SDL_SCANCODE_UP))
+        {
+            mAnimationTimer = mAnimationTotalTime;
+        }
+
+        if (!mAnimationDone)
+        {
+            mAnimationTimer += mTimer->DeltaTime();
+            if (mAnimationTimer >= mAnimationTotalTime)
+            {
+                mAnimationDone = true;
+                return;
+            }
+            //mAnimationTimer += mTimer->DeltaTime();
+            Position(Lerp(mAnimationStartPos, mAnimationEndPos,
+                mAnimationTimer / mAnimationTotalTime));
+        }
+    }
+
+    void StartScreen::Render()
+    {
+
+        mPlayerOne->Render();
+        mPlayerTwo->Render();
         mHiScore->Render();
+
+
+        mOnePlayerMode->Render();
+        mTwoPlayerMode->Render();
+        mCursor->Render();
+
+        mNamco->Render();
+        mDates->Render();
+        mRights->Render();
+
+        mLogo->Render();
+    }
+
+    void StartScreen::ChangeSelectedMode(int change)
+    {
+        mSelectedMode += change;
+        if (mSelectedMode < 0)
+        {
+            mSelectedMode = 1;
+        }
+        else if (mSelectedMode > 1)
+        {
+            mSelectedMode = 0;
+        }
+        mCursor->Position(mCursorStartPos + mCursorOffset * (float)mSelectedMode);
     }
 }

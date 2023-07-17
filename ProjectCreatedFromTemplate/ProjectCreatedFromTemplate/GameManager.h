@@ -36,8 +36,6 @@ namespace SDLFramework
         Timer* mTimer;
 
         //Test
-        Texture* mTex;
-        Texture* mFontTex;
         StartScreen* mStartScreen;
         //End test
     public:
@@ -108,26 +106,7 @@ namespace SDLFramework
 
         mStartScreen->Update();
 
-        if (mInputManager->KeyDown(SDL_SCANCODE_A))
-        {
-            mTex->Translate(Vector2(-40, 0.0f) * mTimer->DeltaTime(),
-                GameEntity::World);
-        }
-        else if (mInputManager->KeyDown(SDL_SCANCODE_D))
-        {
-            mTex->Translate(Vector2(40, 0) * mTimer->DeltaTime(),
-                GameEntity::World);
-        }
-        if (mInputManager->KeyDown(SDL_SCANCODE_W))
-        {
-            mTex->Translate(Vector2(0, -40.0f) * mTimer->DeltaTime(),
-                GameEntity::World);
-        }
-        else if (mInputManager->KeyDown(SDL_SCANCODE_S))
-        {
-            mTex->Translate(Vector2(0, 40.0f) * mTimer->DeltaTime(),
-                GameEntity::World);
-        }
+        
         if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE))
         {
             std::cout << "Space pressed!" << std::endl;
@@ -149,11 +128,6 @@ namespace SDLFramework
         { 
             mAudioManager->PlaySFX("bling.wav", 0, -1); 
         }
-
-        if (mTex != nullptr)
-        {
-            mTex->Update();
-        }
     }
 
     void GameManager::LateUpdate()
@@ -165,8 +139,6 @@ namespace SDLFramework
     {
         mGraphics->ClearBackBuffer();
         
-        mTex->Render(); 
-        mFontTex->Render(); 
         mStartScreen->Render();
         
         mGraphics->Render();
@@ -174,24 +146,6 @@ namespace SDLFramework
 
     void GameManager::TestStuff()
     {
-        mTex = new AnimatedTexture("Sprite2.png", // filename 
-            0, // x clip 
-            0, // y clip 
-            480/5, // clip w 
-            768/8, // clip h 
-            40, // total frames 
-            1, // animation length in second 
-            AnimDir::Horizontal); //frame layout ...
-
-        mTex->Position(Graphics::Instance()->SCREEN_WIDTH / 2,
-            Graphics::Instance()->SCREEN_HEIGHT / 2);
-
-        mFontTex = new Texture("Hello World!", 
-            "waltdisney.ttf", 
-            25, 
-            { 0, 255, 0 }); 
-        mFontTex->Position(Vector2(400, 200));
-
         mStartScreen = new StartScreen();
     }
 
@@ -223,9 +177,6 @@ namespace SDLFramework
 
         Timer::Release();
         mTimer = nullptr;
-
-        delete mTex;
-        mTex = nullptr; 
         
         delete mStartScreen; 
         mStartScreen = nullptr;
