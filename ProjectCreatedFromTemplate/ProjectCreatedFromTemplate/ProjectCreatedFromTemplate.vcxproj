@@ -188,6 +188,7 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
   <ItemGroup>
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="galaga\Level.h" />
+    <ClInclude Include="galaga\Player.h" />
     <ClInclude Include="galaga\PlayScreen.h" />
     <ClInclude Include="galaga\PlaySideBar.h" />
     <ClInclude Include="managers\AssetManager.h" />

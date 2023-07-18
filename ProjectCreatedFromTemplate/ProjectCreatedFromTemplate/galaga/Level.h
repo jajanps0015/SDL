@@ -4,6 +4,7 @@
 #include <Timer.h>
 #include <galaga/PlaySideBar.h>
 #include <galaga/BackgroundStars.h>
+#include <galaga/Player.h>
 
 using namespace SDLFramework;
 
@@ -27,10 +28,14 @@ namespace Galaga
         Texture* mReadyLabel;
         float mReadyLabelOnScreen;
         float mReadyLabelOffScreen;
+        Player* mPlayer;
+
         void StartStage();
 
     public:
-        Level(int stage, PlaySideBar* sideBar);
+        enum LevelStates { Running, Finished, GameOver };
+        
+        Level(int stage, PlaySideBar* sideBar, Player* player);
         ~Level();
 
         void Update() override;
@@ -42,7 +47,7 @@ namespace Galaga
         mStageStarted = true;
     }
 
-    Level::Level(int stage, PlaySideBar* sideBar)
+    Level::Level(int stage, PlaySideBar* sideBar, Player* player)
     {
         mTimer = Timer::Instance();
         mSideBar = sideBar;
@@ -74,6 +79,8 @@ namespace Galaga
 
         mReadyLabelOnScreen = mStageLabelOffScreen;
         mReadyLabelOffScreen = mReadyLabelOnScreen + 3.0f;
+
+        mPlayer = player;
     }
 
     Level::~Level()
@@ -90,6 +97,8 @@ namespace Galaga
 
         delete mReadyLabel;
         mReadyLabel = nullptr;
+
+        mPlayer = nullptr;
     }
 
     void Level::Update()
@@ -112,7 +121,9 @@ namespace Galaga
         }
         else if (mLabelTimer >= mReadyLabelOffScreen)
         {
-            StartStage();
+            StartStage(); 
+            mPlayer->Active(true); 
+            mPlayer->Visible(true);
         }
 
     }

@@ -106,6 +106,7 @@ namespace SDLFramework
     const Vector2 Vec2_One = { 1.0f, 1.0f };
     const Vector2 Vec2_Up = { 0.0f, 1.0f };
     const Vector2 Vec2_Right = { 1.0f, 0.0f };
+    
     const Vector2 Vec2_Down = { 0.0f, -1.0f };
     const Vector2 Vec2_Left = { -1.0f, 0.0f };
 }

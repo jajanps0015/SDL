@@ -6,6 +6,7 @@
 #include <galaga/BackgroundStars.h>
 #include <galaga/PlaySideBar.h>
 #include <galaga/Level.h>
+#include <galaga/Player.h>
 
 using namespace SDLFramework;
 
@@ -26,6 +27,7 @@ namespace Galaga
         Level* mLevel; 
         bool mLevelStarted; 
         int mCurrentStage;
+        Player* mPlayer;
         
         void StartNextLevel();
 
@@ -37,6 +39,8 @@ namespace Galaga
 
         void Update() override;
         void Render() override;
+
+        bool GameOver();
     };
 
     PlayScreen::PlayScreen() 
@@ -66,6 +70,8 @@ namespace Galaga
         mLevelStartTimer = 0.0f; 
         mCurrentStage = 0; 
         mAudio->PlayMusic("MUS/GameStart.wav", 0);
+
+        mPlayer = nullptr;
     } 
     
     PlayScreen::~PlayScreen() 
@@ -82,12 +88,16 @@ namespace Galaga
         
         delete mLevel; 
         mLevel = nullptr;
+
+        delete mPlayer; 
+        mPlayer = nullptr;
     }
 
     void PlayScreen::Update() 
     {
         if (mGameStarted) 
-        { 
+        {
+            mPlayer->Update();
             if (!mLevelStarted) 
             { 
                 mLevelStartTimer += mTimer->DeltaTime(); 
@@ -124,16 +134,30 @@ namespace Galaga
             mStartLabel->Render(); 
         } 
 
-        if (mGameStarted && mLevelStarted) 
+        if (mGameStarted)
         { 
-            mLevel->Render(); 
+            if (mLevelStarted) 
+            { 
+                mLevel->Render(); 
+            } 
+            mPlayer->Render();
         }
     }
 
     void PlayScreen::StartNewGame()
     {
+        delete mPlayer; 
+        mPlayer = new Player(); 
+        
+        mPlayer->Parent(this); 
+        mPlayer->Position(Graphics::SCREEN_WIDTH * 0.4f, Graphics::SCREEN_HEIGHT * 0.8f);
+        mPlayer->Active(false); 
+        
         mSideBar->SetHighScore(30000); 
-        mSideBar->SetShips(2);
+        mSideBar->SetShips(mPlayer->Lives()); 
+        
+        mSideBar->SetPlayerScore(mPlayer->Score()); 
+        mSideBar->SetLevel(0);
     }
     
     void PlayScreen::StartNextLevel() 
@@ -143,6 +167,6 @@ namespace Galaga
         mLevelStarted = true; 
         
         delete mLevel; 
-        mLevel = new Level(mCurrentStage, mSideBar);
+        mLevel = new Level(mCurrentStage, mSideBar, mPlayer);
     }
 }

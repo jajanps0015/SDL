@@ -59,6 +59,9 @@ namespace SDLFramework
         mAnimationDone = false;
     }
 
+    AnimatedTexture::~AnimatedTexture()
+    {}
+
     void AnimatedTexture::SetWrapMode(WrapMode wrapMode) 
     { 
         mWrapMode = wrapMode; 
