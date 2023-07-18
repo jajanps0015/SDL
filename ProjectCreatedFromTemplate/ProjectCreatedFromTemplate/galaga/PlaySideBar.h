@@ -102,9 +102,9 @@ namespace Galaga
         mTotalShipsLabel->Position(140.0f, 80.0f);
 
         mFlags = new GameEntity();
-
         mFlags->Parent(this);
         mFlags->Position(-50.0f, 0);
+
         mFlagTimer = 0.0f;
         mFlagInterval = 0.25f;
     }

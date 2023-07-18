@@ -80,5 +80,8 @@
     <ClInclude Include="galaga\PlaySideBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="galaga\Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
