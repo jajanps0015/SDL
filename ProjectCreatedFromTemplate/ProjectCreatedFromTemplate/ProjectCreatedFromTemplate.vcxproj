@@ -187,17 +187,17 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedTexture.h" />
-    <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="managers\AssetManager.h" />
+    <ClInclude Include="managers\AudioManager.h" />
     <ClInclude Include="galaga\BackgroundStars.h" />
     <ClInclude Include="galaga\Scoreboard.h" />
     <ClInclude Include="galaga\Star.h" />
     <ClInclude Include="galaga\StarLayer.h" />
     <ClInclude Include="galaga\StartScreen.h" />
     <ClInclude Include="GameEntity.h" />
-    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="managers\GameManager.h" />
     <ClInclude Include="Graphics.h" />
-    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="managers\InputManager.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SDLMain.h" />

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameEntity.h>
-#include <AssetManager.h> 
+#include <managers/AssetManager.h> 
 
 namespace SDLFramework
 {

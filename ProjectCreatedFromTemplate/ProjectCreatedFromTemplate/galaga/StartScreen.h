@@ -2,7 +2,7 @@
 
 #include <AnimatedTexture.h>
 #include <GameEntity.h>
-#include <InputManager.h> 
+#include <managers/InputManager.h> 
 #include <galaga/Scoreboard.h>
 
 using namespace SDLFramework;

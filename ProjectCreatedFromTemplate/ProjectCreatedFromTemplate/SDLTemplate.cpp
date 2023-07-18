@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDLMain.h>
 #include <algorithm>
-#include <GameManager.h>
+#include <managers/GameManager.h>
 
 using namespace SDLFramework;
 

@@ -4,10 +4,10 @@
 #include <Timer.h>
 #include <GameEntity.h>
 #include <Texture.h>
-#include <AssetManager.h>
-#include <InputManager.h>
+#include <managers/AssetManager.h>
+#include <managers/InputManager.h>
 #include <AnimatedTexture.h>
-#include <AudioManager.h>
+#include <managers/AudioManager.h>
 #include <galaga/StartScreen.h>
 #include <galaga/BackgroundStars.h>
 
