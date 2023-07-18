@@ -74,5 +74,11 @@
     <ClInclude Include="galaga\ScreenManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="galaga\PlayScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="galaga\PlaySideBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

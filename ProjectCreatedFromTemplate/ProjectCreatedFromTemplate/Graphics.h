@@ -115,6 +115,8 @@ namespace SDLFramework
         }
         
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+
+        SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         
         if (mRenderer == nullptr)
         {

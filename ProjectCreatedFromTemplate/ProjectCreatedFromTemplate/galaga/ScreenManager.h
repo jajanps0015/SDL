@@ -1,6 +1,7 @@
 #pragma once
 
 #include <galaga/StartScreen.h>
+#include <galaga/PlayScreen.h>
 #include <galaga/BackgroundStars.h>
 
 namespace Galaga
@@ -16,7 +17,9 @@ namespace Galaga
 
         InputManager* mInput;
         BackgroundStars* mBackgroundStars;
+
         StartScreen* mStartScreen;
+        PlayScreen* mPlayScreen;
 
     public:
         static ScreenManager* Instance();
@@ -50,6 +53,8 @@ namespace Galaga
 
         mStartScreen = new StartScreen();
         mCurrentScreen = Start;
+
+        mPlayScreen = new PlayScreen();
     }
 
     ScreenManager::~ScreenManager()
@@ -61,6 +66,9 @@ namespace Galaga
 
         delete mStartScreen;
         mStartScreen = nullptr;
+
+        delete mPlayScreen;
+        mPlayScreen = nullptr;
     }
 
     void ScreenManager::Update()
@@ -70,17 +78,21 @@ namespace Galaga
         {
         case Start:
             mStartScreen->Update();
-            
-            if (mInput->KeyPressed(SDL_SCANCODE_RETURN)) 
-            { 
-                mCurrentScreen = Play; 
+
+            if (mInput->KeyPressed(SDL_SCANCODE_RETURN))
+            {
+                mCurrentScreen = Play;
                 mStartScreen->ResetAnimation();
+                mPlayScreen->StartNewGame();
             }
             break;
+
         case Play:
-            if (mInput->KeyPressed(SDL_SCANCODE_ESCAPE)) 
-            { 
-                mCurrentScreen = Start; 
+            mPlayScreen->Update();
+
+            if (mInput->KeyPressed(SDL_SCANCODE_ESCAPE))
+            {
+                mCurrentScreen = Start;
             }
             break;
         }
@@ -94,7 +106,9 @@ namespace Galaga
         case Start:
             mStartScreen->Render();
             break;
+
         case Play:
+            mPlayScreen->Render();
             break;
         }
     }
