@@ -198,6 +198,7 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     <ClInclude Include="managers\GameManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="managers\InputManager.h" />
+    <ClInclude Include="galaga\ScreenManager.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SDLMain.h" />

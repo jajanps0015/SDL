@@ -8,8 +8,8 @@
 #include <managers/InputManager.h>
 #include <AnimatedTexture.h>
 #include <managers/AudioManager.h>
-#include <galaga/StartScreen.h>
 #include <galaga/BackgroundStars.h>
+#include <galaga/ScreenManager.h>
 
 using namespace Galaga;
 
@@ -30,15 +30,14 @@ namespace SDLFramework
         Graphics* mGraphics;
         AssetManager* mAssetManager;
         InputManager* mInputManager;
-        AudioManager* mAudioManager;
+        AudioManager* mAudioManager; 
+        ScreenManager* mScreenManager;
 
         SDL_Event mEvent;
         const int FRAME_RATE = 60;
         Timer* mTimer;
 
         //Test
-        BackgroundStars* mStars;
-        StartScreen* mStartScreen;
         //End test
     public:
         static GameManager* Instance();
@@ -104,10 +103,9 @@ namespace SDLFramework
 
     void GameManager::Update()
     {
-        mInputManager->Update();
-
-        mStartScreen->Update();
-        mStars->Update();
+        mInputManager->Update(); 
+        
+        mScreenManager->Update();
         
         if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE))
         {
@@ -141,16 +139,13 @@ namespace SDLFramework
     {
         mGraphics->ClearBackBuffer();
         
-        mStartScreen->Render(); 
-        mStars->Render();;
+        mScreenManager->Render();
         
         mGraphics->Render();
     }
 
     void GameManager::TestStuff()
     {
-        mStars = BackgroundStars::Instance();
-        mStartScreen = new StartScreen();
     }
 
     GameManager::GameManager() : mQuit(false)
@@ -162,7 +157,8 @@ namespace SDLFramework
         mTimer = Timer::Instance();         
         mInputManager = InputManager::Instance(); 
         mAudioManager = AudioManager::Instance();
-        mAssetManager = AssetManager::Instance();
+        mAssetManager = AssetManager::Instance(); 
+        mScreenManager = ScreenManager::Instance();
 
         // verify Graphics module is ready 
         if (!Graphics::Initialized())
@@ -176,17 +172,12 @@ namespace SDLFramework
     GameManager::~GameManager()
     {
         // release modules 
-        BackgroundStars::Release();
-        mStars = nullptr;
 
         Graphics::Release();
         mGraphics = nullptr;
 
         Timer::Release();
         mTimer = nullptr;
-        
-        delete mStartScreen; 
-        mStartScreen = nullptr;
 
         AssetManager::Release();
         mAssetManager = nullptr;
@@ -195,7 +186,10 @@ namespace SDLFramework
         mInputManager = nullptr; 
         
         AudioManager::Release();
-        mAudioManager = nullptr;
+        mAudioManager = nullptr; 
+        
+        ScreenManager::Release(); 
+        mScreenManager = nullptr;
 
         // Quit SDL subsystems 
         SDL_Quit();

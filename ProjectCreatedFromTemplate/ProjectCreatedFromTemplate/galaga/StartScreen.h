@@ -44,13 +44,18 @@ namespace Galaga
         Vector2 mCursorOffset;
         int mSelectedMode;
 
-        Scoreboard* mPlayerOneScore; 
-        Scoreboard* mPlayerTwoScore; 
+        Scoreboard* mPlayerOneScore;
+        Scoreboard* mPlayerTwoScore;
         Scoreboard* mTopScore;
+
+        BackgroundStars* mStars;
 
     public:
         StartScreen();
         ~StartScreen();
+
+        void ResetAnimation();
+        int SelectedMode();
 
         void ChangeSelectedMode(int change);
 
@@ -138,21 +143,24 @@ namespace Galaga
 
         //**************************************************************
         // top bar entities ... 
-        mPlayerOneScore = new Scoreboard(); 
-        mPlayerTwoScore = new Scoreboard(); 
-        mTopScore = new Scoreboard(); 
-        
-        mPlayerOneScore->Parent(mPlayerOne); 
-        mPlayerTwoScore->Parent(mPlayerTwo); 
+        mPlayerOneScore = new Scoreboard();
+        mPlayerTwoScore = new Scoreboard();
+        mTopScore = new Scoreboard();
+
+        mPlayerOneScore->Parent(mPlayerOne);
+        mPlayerTwoScore->Parent(mPlayerTwo);
         mTopScore->Parent(mHiScore);
-        
-        mPlayerOneScore->Position(mPlayerOne->Position(World) + Vector2(0,80));
+
+        mPlayerOneScore->Position(mPlayerOne->Position(World) + Vector2(0, 80));
         mPlayerTwoScore->Position(mPlayerTwo->Position(World) + Vector2(0, 80));
         mTopScore->Position(mHiScore->Position(World) + Vector2(0, 80));
 
         mPlayerOneScore->Score(0);
         mPlayerTwoScore->Score(0);
         mTopScore->Score(645987);
+
+        mStars = BackgroundStars::Instance();
+        mStars->Scroll(true);
     }
 
     StartScreen::~StartScreen()
@@ -200,13 +208,13 @@ namespace Galaga
         delete mLogo;
         mLogo = nullptr;
 
-        delete mPlayerOneScore; 
-        mPlayerOneScore = nullptr; 
-        
-        delete mPlayerTwoScore; 
-        mPlayerTwoScore = nullptr; 
-        
-        delete mTopScore; 
+        delete mPlayerOneScore;
+        mPlayerOneScore = nullptr;
+
+        delete mPlayerTwoScore;
+        mPlayerTwoScore = nullptr;
+
+        delete mTopScore;
         mTopScore = nullptr;
 
         mTimer = nullptr;
@@ -217,13 +225,13 @@ namespace Galaga
     {
         if (mAnimationDone)
         {
-            if (mInput->KeyPressed(SDL_SCANCODE_DOWN)) 
-            { 
-                ChangeSelectedMode(1); 
+            if (mInput->KeyPressed(SDL_SCANCODE_DOWN))
+            {
+                ChangeSelectedMode(1);
             }
-            else if (mInput->KeyPressed(SDL_SCANCODE_UP)) 
-            { 
-                ChangeSelectedMode(-1); 
+            else if (mInput->KeyPressed(SDL_SCANCODE_UP))
+            {
+                ChangeSelectedMode(-1);
             }
         }
         else if (mInput->KeyPressed(SDL_SCANCODE_DOWN) || mInput->KeyPressed(SDL_SCANCODE_UP))
@@ -243,10 +251,14 @@ namespace Galaga
             Position(Lerp(mAnimationStartPos, mAnimationEndPos,
                 mAnimationTimer / mAnimationTotalTime));
         }
+
+        mStars->Update();
     }
 
     void StartScreen::Render()
     {
+        mStars->Render();
+
         mPlayerOne->Render();
         mPlayerTwo->Render();
         mHiScore->Render();
@@ -261,8 +273,8 @@ namespace Galaga
 
         mLogo->Render();
 
-        mPlayerOneScore->Render(); 
-        mPlayerTwoScore->Render(); 
+        mPlayerOneScore->Render();
+        mPlayerTwoScore->Render();
         mTopScore->Render();
     }
 
@@ -279,4 +291,20 @@ namespace Galaga
         }
         mCursor->Position(mCursorStartPos + mCursorOffset * (float)mSelectedMode);
     }
+
+    void StartScreen::ResetAnimation()
+    {
+        mAnimationStartPos = Vector2(0.0f, Graphics::SCREEN_HEIGHT);
+        mAnimationEndPos = Vec2_Zero;
+        mAnimationTotalTime = 5.0f;
+
+        mAnimationTimer = 0.0f; mAnimationDone = false;
+        Position(mAnimationStartPos);
+        mCursorStartPos = mCursor->Position(Local);
+
+        mCursorOffset = Vector2(0.0f, 70.0f);
+        mSelectedMode = 0;
+    }
+
+    int StartScreen::SelectedMode() { return mSelectedMode; }
 }
