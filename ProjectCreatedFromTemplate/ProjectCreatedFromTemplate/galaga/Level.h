@@ -5,6 +5,7 @@
 #include <galaga/PlaySideBar.h>
 #include <galaga/BackgroundStars.h>
 #include <galaga/Player.h>
+#include <galaga/Enemy.h>
 
 using namespace SDLFramework;
 
@@ -57,6 +58,8 @@ namespace Galaga
         void HandleStartLabels();
         void HandleCollisions();
         void HandlePlayerDeath();
+
+        Enemy* mEnemy;
     };
 
     void Level::StartStage()
@@ -111,6 +114,8 @@ namespace Galaga
         mGameOverTimer = 0.0f;
         mGameOverLabelOnScreen = 1.0f;
         mCurrentState = Running;
+
+        mEnemy = new Enemy(0);
     }
 
     Level::~Level()
@@ -132,6 +137,9 @@ namespace Galaga
 
         delete mGameOverLabel;
         mGameOverLabel = nullptr;
+
+        delete mEnemy; 
+        mEnemy = nullptr;
     }
 
     void Level::Update()
@@ -151,6 +159,8 @@ namespace Galaga
                     mCurrentState = Finished;
                 }
             }
+            mEnemy->Update();
+
             return;
         }
 
@@ -204,6 +214,7 @@ namespace Galaga
                     mGameOverLabel->Render();
                 }
             }
+            mEnemy->Render();
         }
     }
 

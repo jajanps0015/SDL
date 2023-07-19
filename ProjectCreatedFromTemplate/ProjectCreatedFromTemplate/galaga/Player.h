@@ -4,6 +4,7 @@
 #include <managers/AudioManager.h>
 #include <managers/InputManager.h>
 #include <AnimatedTexture.h>
+#include <galaga/Bullet.h>
 
 using namespace SDLFramework;
 
@@ -26,7 +27,11 @@ namespace Galaga
         float mMoveSpeed;
         Vector2 mMoveBounds;
 
+        static const int MAX_BULLETS = 2;
+        Bullet* mBullets[MAX_BULLETS];
+
         void HandleMovement();
+        void HandleFiring();
 
     public:
         Player();
@@ -66,6 +71,11 @@ namespace Galaga
         mDeathAnimation->Parent(this);
         mDeathAnimation->Position(Vec2_Zero);
         mDeathAnimation->SetWrapMode(WrapMode::Once);
+
+        for (int i = 0; i < MAX_BULLETS; ++i)
+        {
+            mBullets[i] = new Bullet();
+        }
     }
 
     Player::~Player()
@@ -79,6 +89,13 @@ namespace Galaga
 
         delete mDeathAnimation;
         mDeathAnimation = nullptr;
+
+        for (int i = 0; i < MAX_BULLETS; ++i)
+        {
+            delete mBullets[i];
+
+            mBullets[i] = nullptr;
+        }
     }
 
     void Player::Visible(bool visible)
@@ -140,6 +157,23 @@ namespace Galaga
         Position(pos);
     }
 
+    void Player::HandleFiring()
+    {
+        if (mInput->KeyPressed(SDL_SCANCODE_SPACE))
+        {
+            for (int i = 0; i < MAX_BULLETS; ++i)
+            {
+                if (!mBullets[i]->Active())
+                {
+                    mBullets[i]->Fire(Position());
+
+                    mAudio->PlaySFX("SFX/Fire.wav", 0, -1);
+                    break;
+                }
+            }
+        }
+    }
+
     void Player::Update()
     {
         if (mAnimating)
@@ -152,22 +186,33 @@ namespace Galaga
             if (Active())
             {
                 HandleMovement();
+                HandleFiring();
             }
+        }
+
+        for (int i = 0; i < MAX_BULLETS; ++i)
+        {
+            mBullets[i]->Update();
         }
     }
 
-    void Player::Render() 
-    { 
-        if (mVisible) 
-        { 
-            if (mAnimating) 
-            { 
-                mDeathAnimation->Render(); 
-            } 
-            else 
-            { 
-                mShip->Render(); 
-            } 
-        } 
+    void Player::Render()
+    {
+        if (mVisible)
+        {
+            if (mAnimating)
+            {
+                mDeathAnimation->Render();
+            }
+            else
+            {
+                mShip->Render();
+            }
+
+            for (int i = 0; i < MAX_BULLETS; ++i)
+            {
+                mBullets[i]->Render();
+            }
+        }
     }
 }

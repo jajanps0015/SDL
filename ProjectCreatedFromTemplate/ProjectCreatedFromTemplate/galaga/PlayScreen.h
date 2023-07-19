@@ -72,6 +72,8 @@ namespace Galaga
         mAudio->PlayMusic("MUS/GameStart.wav", 0);
 
         mPlayer = nullptr;
+
+        Enemy::CreatePaths();
     }
 
     PlayScreen::~PlayScreen()
