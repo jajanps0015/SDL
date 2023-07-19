@@ -61,7 +61,7 @@ namespace Galaga
         mMoveSpeed = 100.0f;
         mMoveBounds = Vector2(0.0f, 800.0f);
 
-        mDeathAnimation = new AnimatedTexture("PlayerExplosion.png", 0, 0, 128, 128, 4, 1.0f, AnimDir::Horizontal);
+        mDeathAnimation = new AnimatedTexture("PlayerExplosion.png", 0, 0, 128, 128, 4, 3.0f, AnimDir::Horizontal);
 
         mDeathAnimation->Parent(this);
         mDeathAnimation->Position(Vec2_Zero);

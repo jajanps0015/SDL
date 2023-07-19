@@ -90,9 +90,9 @@ namespace Galaga
         case Play:
             mPlayScreen->Update();
 
-            if (mInput->KeyPressed(SDL_SCANCODE_ESCAPE))
-            {
-                mCurrentScreen = Start;
+            if (mPlayScreen->GameOver()) 
+            { 
+                mCurrentScreen = Start; 
             }
             break;
         }
