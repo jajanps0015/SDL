@@ -5,8 +5,12 @@
 #include <Texture.h>
 #include <Timer.h>
 #include <BezierPath.h>
+#include <galaga/Formation.h>
+#include <MathHelper.h>
 
 using namespace SDLFramework;
+
+typedef Galaga::Formation Swarm;
 
 namespace Galaga
 {
@@ -14,44 +18,72 @@ namespace Galaga
     {
     public:
         enum States { FlyIn, Formation, Diving, Dead };
+        enum Types { Butterfly, Wasp, Boss };
+
+        static void SetFormation(Swarm* formation);
 
     protected:
         static std::vector<std::vector<Vector2>> sPaths;
+        static Swarm* sFormation;
+
         Timer* mTimer;
         Texture* mTexture;
         States mCurrentState;
         unsigned mCurrentPath;
         unsigned mCurrentWaypoint;
 
+        int mIndex;
+        Types mType;
+        bool mChallengeStage;
+        Vector2 mDiveStartPosition;
+
         const float EPSILON = 5.0f;
         float mSpeed;
 
         virtual void HandleFlyInState();
         virtual void HandleFormationState();
-        virtual void HandleDiveState();
-        virtual void HandleDeadState();
 
         void HandleStates();
 
         virtual void RenderFlyInState();
         virtual void RenderFormationState();
-        virtual void RenderDivingState();
-        virtual void RenderDeadState();
+
+        virtual void PathComplete();
+        virtual void FlyInComplete();
+        void JoinFormation();
+        virtual Vector2 WorldFormationPosition();
+
+        virtual Vector2 LocalFormationPosition() = 0;
+        virtual void HandleDiveState() = 0;
+        virtual void HandleDeadState() = 0;
+        virtual void RenderDiveState() = 0;
+        virtual void RenderDeadState() = 0;
 
         void RenderStates();
 
     public:
         static void CreatePaths();
-        Enemy(int path);
+        Enemy(int path, int index, bool challenge);
 
         virtual ~Enemy();
         States CurrentState();
 
         void Update() override;
         void Render() override;
+
+        Types Type();
+        int Index();
+
+        virtual void Dive(int type = 0);
     };
 
     std::vector<std::vector<Vector2>> Enemy::sPaths;
+    Swarm* Enemy::sFormation = nullptr;
+
+    void Enemy::SetFormation(Swarm* formation)
+    {
+        sFormation = formation;
+    }
 
     void Enemy::CreatePaths()
     {
@@ -97,14 +129,7 @@ namespace Galaga
         delete path;
     }
 
-    void Enemy::HandleFormationState() { }
-
-    void Enemy::HandleDiveState() { }
-
-    void Enemy::HandleDeadState() { }
-
     void Enemy::HandleStates()
-
     {
         switch (mCurrentState)
 
@@ -155,12 +180,6 @@ namespace Galaga
         }
     }
 
-    void Enemy::RenderDivingState()
-    { }
-
-    void Enemy::RenderDeadState()
-    { }
-
     void Enemy::RenderStates()
     {
         switch (mCurrentState)
@@ -174,7 +193,7 @@ namespace Galaga
             break;
 
         case Diving:
-            RenderDivingState();
+            RenderDiveState();
             break;
 
         case Dead:
@@ -183,7 +202,10 @@ namespace Galaga
         }
     }
 
-    Enemy::Enemy(int path) : mCurrentPath(path)
+    Enemy::Enemy(int path, int index, bool challenge) :
+        mCurrentPath(path),
+        mIndex(index),
+        mChallengeStage(challenge)
     {
         mTimer = Timer::Instance();
         mCurrentState = FlyIn;
@@ -192,9 +214,11 @@ namespace Galaga
 
         Position(sPaths[mCurrentPath][0]);
 
-        mTexture = new Texture("AnimatedEnemies.png", 0, 0, 52, 40);
+        /*mTexture = new Texture("AnimatedEnemies.png", 0, 0, 52, 40);
         mTexture->Parent(this);
-        mTexture->Position(Vec2_Zero);
+        mTexture->Position(Vec2_Zero);*/
+
+        mTexture = nullptr;
 
         mSpeed = 20;
     }
@@ -236,16 +260,102 @@ namespace Galaga
             mCurrentWaypoint++;
         }
 
-        if (mCurrentWaypoint < sPaths[mCurrentPath].size())
+        std::cout << "mCurrentWaypoint = " << mCurrentWaypoint
+            << "and sPaths[mCurrentPath].size() = " << sPaths[mCurrentPath].size() << std::endl;
+        
+        if (mCurrentWaypoint >= sPaths[mCurrentPath].size())
+        {
+            std::cout << "Path complete" << std::endl;
+            PathComplete();
+
+            Vector2 dist = WorldFormationPosition() - Position();
+
+            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+
+            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+
+            //if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
+            //{
+                FlyInComplete();
+            //}
+        }
+
+        else if (mCurrentWaypoint < sPaths[mCurrentPath].size())
         {
             Vector2 dist = sPaths[mCurrentPath][mCurrentWaypoint] - Position();
 
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);            
         }
-
         else
         {
-            mCurrentState = Formation;
+            /*Vector2 dist = WorldFormationPosition() - Position();
+
+            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+
+            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+
+            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
+            {
+                FlyInComplete();
+            }*/
         }
+    }
+
+    void Enemy::JoinFormation()
+    {
+        Position(WorldFormationPosition());
+        Rotation(0);
+        Parent(sFormation);
+
+        mCurrentState = Formation;
+    }
+
+    Vector2 Enemy::WorldFormationPosition()
+    {
+        return sFormation->Position() + LocalFormationPosition();
+    }
+
+    void Enemy::FlyInComplete()
+    {
+        if (mChallengeStage)
+        {
+            mCurrentState = Dead;
+        }
+        else
+        {
+            JoinFormation();
+        }
+    }
+
+    void Enemy::PathComplete()
+    {
+        if (mChallengeStage)
+        {
+            mCurrentState = Dead;
+        }
+    }
+
+    Enemy::Types Enemy::Type()
+    {
+        return mType;
+    }
+
+    int Enemy::Index()
+    {
+        return mIndex;
+    }
+
+    void Enemy::HandleFormationState()
+    {
+        Position(LocalFormationPosition());
+    }
+
+    void Enemy::Dive(int type)
+    {
+        Parent(nullptr); // breaks away from formation, see join formation method
+
+        mCurrentState = Diving;
+        mDiveStartPosition = Position();
+        mCurrentWaypoint = 1;
     }
 }

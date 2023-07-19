@@ -6,6 +6,7 @@
 #include <galaga/BackgroundStars.h>
 #include <galaga/Player.h>
 #include <galaga/Enemy.h>
+#include <galaga/Butterfly.h>
 
 using namespace SDLFramework;
 
@@ -59,7 +60,14 @@ namespace Galaga
         void HandleCollisions();
         void HandlePlayerDeath();
 
-        Enemy* mEnemy;
+        Formation* mFormation;
+        const int MAX_BUTTERFLIES = 16;
+        int mButterflyCount;
+        std::vector<Enemy*> mEnemies;
+
+        void HandleEnemySpawning();
+        void HandleEnemyFormation();
+        void HandleEnemyDiving();
     };
 
     void Level::StartStage()
@@ -115,7 +123,11 @@ namespace Galaga
         mGameOverLabelOnScreen = 1.0f;
         mCurrentState = Running;
 
-        mEnemy = new Enemy(0);
+        mFormation = new Formation();
+        mFormation->Position(Graphics::SCREEN_WIDTH * 0.4f, 150.0f);
+        Enemy::SetFormation(mFormation);
+
+        mButterflyCount = 0;
     }
 
     Level::~Level()
@@ -138,8 +150,12 @@ namespace Galaga
         delete mGameOverLabel;
         mGameOverLabel = nullptr;
 
-        delete mEnemy; 
-        mEnemy = nullptr;
+        for (auto e : mEnemies)
+        {
+            delete e;
+        }
+
+        mEnemies.clear();
     }
 
     void Level::Update()
@@ -147,6 +163,15 @@ namespace Galaga
         if (mStageStarted)
         {
             HandleCollisions();
+
+            HandleEnemySpawning();
+            HandleEnemyFormation();
+            HandleEnemyDiving();
+
+            for (auto e : mEnemies)
+            {
+                e->Update();
+            }
 
             if (mPlayerHit)
             {
@@ -159,7 +184,6 @@ namespace Galaga
                     mCurrentState = Finished;
                 }
             }
-            mEnemy->Update();
 
             return;
         }
@@ -214,7 +238,11 @@ namespace Galaga
                     mGameOverLabel->Render();
                 }
             }
-            mEnemy->Render();
+
+            for (auto e : mEnemies)
+            {
+                e->Render();
+            }
         }
     }
 
@@ -299,4 +327,38 @@ namespace Galaga
             }
         }
     }
+
+    void Level::HandleEnemySpawning()
+    {
+        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_S)
+            && mButterflyCount < MAX_BUTTERFLIES)
+        {
+            mEnemies.push_back(new Butterfly(0, mButterflyCount++, false));
+        }
+    }
+
+    void Level::HandleEnemyFormation()
+    {
+        mFormation->Update();
+
+        if (mButterflyCount == MAX_BUTTERFLIES)
+        {
+            bool flyIn = false;
+            for (auto e : mEnemies)
+            {
+                if (e->CurrentState() == Enemy::FlyIn)
+                {
+                    flyIn = true;
+                    break;
+                }
+            }
+
+            if (!flyIn)
+            {
+                mFormation->Lock();
+            }
+        }
+    }
+
+    void Level::HandleEnemyDiving() { }
 }
