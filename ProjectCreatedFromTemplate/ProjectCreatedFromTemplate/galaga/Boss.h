@@ -112,7 +112,7 @@ namespace Galaga
 
     void Boss::HandleDiveState()
     {
-        int currentPath = mIndex % 2;
+        int currentPath = mIndex % sDivePaths.size();
 
         if (mCaptureDive)
         {

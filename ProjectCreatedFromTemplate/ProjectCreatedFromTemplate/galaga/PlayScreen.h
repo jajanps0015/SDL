@@ -75,6 +75,9 @@ namespace Galaga
 
         Enemy::CreatePaths(); 
         Wasp::CreateDivePaths();
+
+        Boss::CreateDivePaths();
+        Butterfly::CreateDivePaths();
     }
 
     PlayScreen::~PlayScreen()

@@ -46,7 +46,7 @@ namespace Galaga
 
     void Butterfly::HandleDiveState()
     {
-        int currentPath = mIndex % 2;
+        int currentPath = mIndex % sDivePaths.size();
         if (mEscort)
         {
             currentPath += 2;
@@ -117,7 +117,7 @@ namespace Galaga
 
     void Butterfly::CreateDivePaths()
     {
-        // *************** Curve 1 ***************************
+        // *************** Curve 0 ***************************
         int currentPath = 0;
 
         BezierPath* path = new BezierPath();

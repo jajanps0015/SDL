@@ -138,7 +138,7 @@ namespace Galaga
 
     void Wasp::HandleDiveState()
     {
-        int currentPath = mIndex % 2;
+        int currentPath = mIndex % sDivePaths.size();
 
         if (mCurrentWaypoint < sDivePaths[currentPath].size())
         {
