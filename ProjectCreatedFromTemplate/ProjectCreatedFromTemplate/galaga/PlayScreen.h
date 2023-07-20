@@ -73,7 +73,8 @@ namespace Galaga
 
         mPlayer = nullptr;
 
-        Enemy::CreatePaths();
+        Enemy::CreatePaths(); 
+        Wasp::CreateDivePaths();
     }
 
     PlayScreen::~PlayScreen()

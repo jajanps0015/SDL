@@ -27,7 +27,10 @@ namespace Galaga
         static Swarm* sFormation;
 
         Timer* mTimer;
+        
         Texture* mTexture;
+        Texture* mTextures[2];
+
         States mCurrentState;
         unsigned mCurrentPath;
         unsigned mCurrentWaypoint;
@@ -169,6 +172,7 @@ namespace Galaga
     void Enemy::RenderFormationState()
     {
         mTexture->Render();
+        mTextures[sFormation->GetTick() % 2]->Render();
 
         for (unsigned i = 0; i < sPaths[mCurrentPath].size() - 1; ++i)
         {
@@ -218,7 +222,9 @@ namespace Galaga
         mTexture->Parent(this);
         mTexture->Position(Vec2_Zero);*/
 
-        mTexture = nullptr;
+        mTexture = nullptr; 
+        mTextures[0] = nullptr; 
+        mTextures[1] = nullptr;
 
         mSpeed = 20;
     }
@@ -229,6 +235,12 @@ namespace Galaga
 
         delete mTexture;
         mTexture = nullptr;
+
+        for (int i = 0; i < 2; i++) 
+        { 
+            delete mTextures[i]; 
+            mTextures[i] = nullptr; 
+        }
     }
 
     Enemy::States Enemy::CurrentState()

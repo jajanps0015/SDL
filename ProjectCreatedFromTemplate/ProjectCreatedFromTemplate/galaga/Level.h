@@ -7,6 +7,8 @@
 #include <galaga/Player.h>
 #include <galaga/Enemy.h>
 #include <galaga/Butterfly.h>
+#include <galaga/Wasp.h>
+#include <galaga/Boss.h>
 
 using namespace SDLFramework;
 
@@ -61,9 +63,16 @@ namespace Galaga
         void HandlePlayerDeath();
 
         Formation* mFormation;
+        std::vector<Enemy*> mEnemies;
+
         const int MAX_BUTTERFLIES = 16;
         int mButterflyCount;
-        std::vector<Enemy*> mEnemies;
+
+        const int MAX_WASPS = 20;
+        int mWaspCount;
+
+        const int MAX_BOSSES = 4;
+        int mBossCount;
 
         void HandleEnemySpawning();
         void HandleEnemyFormation();
@@ -335,13 +344,25 @@ namespace Galaga
         {
             mEnemies.push_back(new Butterfly(0, mButterflyCount++, false));
         }
+
+        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_D) && mWaspCount < MAX_WASPS)
+        {
+            mEnemies.push_back(new Wasp(0, mWaspCount++, false, false));
+        }
+
+        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_F) && mBossCount < MAX_BOSSES)
+        {
+            mEnemies.push_back(new Boss(0, mBossCount++, false));
+        }
     }
 
     void Level::HandleEnemyFormation()
     {
         mFormation->Update();
 
-        if (mButterflyCount == MAX_BUTTERFLIES)
+        if (mButterflyCount == MAX_BUTTERFLIES
+            && mWaspCount == MAX_WASPS
+            && mBossCount == MAX_BOSSES)
         {
             bool flyIn = false;
             for (auto e : mEnemies)
@@ -360,5 +381,68 @@ namespace Galaga
         }
     }
 
-    void Level::HandleEnemyDiving() { }
+    void Level::HandleEnemyDiving()
+    {
+        if (mFormation->Locked())
+        {
+            if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_V))
+            {
+                for (auto e : mEnemies)
+                {
+                    if (e->Type() == Enemy::Wasp
+                        && e->CurrentState() == Enemy::Formation) {
+                        e->Dive();
+                        break; // work done, leave loop. 
+                    }
+                }
+            }
+
+            if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_B))
+            {
+                for (auto e : mEnemies)
+                {
+                    if (e->Type() == Enemy::Butterfly
+                        && e->CurrentState() == Enemy::Formation)
+                    {
+                        e->Dive(); break; // work done, leave loop. 
+                    }
+                }
+            }
+
+            if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_H))
+            {
+                for (auto e : mEnemies)
+                {
+                    if (e->Type() == Enemy::Boss
+                        && e->CurrentState() == Enemy::Formation)
+                    {
+                        e->Dive();
+
+                        int index = e->Index();
+
+                        int firstEscortIndex = (index % 2 == 0)
+                            ? (index * 2)
+                            : (index * 2 - 1);
+
+                        int secondEscortIndex = firstEscortIndex + 4;
+
+                        for (auto f : mEnemies)
+                        {
+                            // verify enemy is butterfly in formation 
+                            // and has either the first or second escort index 
+
+                            if (f->Type() == Enemy::Butterfly
+                                && f->CurrentState() == Enemy::Formation
+                                && (f->Index() == firstEscortIndex || f->Index() == secondEscortIndex))
+                            {
+                                f->Dive(1);
+                            }
+                        }
+
+                        break; // work done, leave loop. 
+                    }
+                }
+            }
+        }
+    }
 }

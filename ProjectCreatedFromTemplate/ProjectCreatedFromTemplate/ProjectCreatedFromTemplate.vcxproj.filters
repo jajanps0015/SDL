@@ -104,5 +104,11 @@
     <ClInclude Include="galaga\Butterfly.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="galaga\Wasp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="galaga\Boss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
