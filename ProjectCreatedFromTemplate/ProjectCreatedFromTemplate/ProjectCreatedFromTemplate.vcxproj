@@ -105,7 +105,8 @@
 copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
+xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /y /s
+xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,7 +132,8 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
 copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
+xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /y /s
+xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -153,7 +155,8 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
 copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
+xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /y /s
+xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -179,11 +182,13 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
 copy /y "$(SolutionDir)SDL2_image\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
 copy /y "$(SolutionDir)SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(SolutionDir)out\$(Configuration)\"
-xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
+xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /y /s
+xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SDLTemplate.cpp" />
+    <ClCompile Include="tinyxml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedTexture.h" />
@@ -216,6 +221,7 @@ xcopy "$(SolutionDir)\Assets\*" "$(OutDir)Assets\" /y /s</Command>
     <ClInclude Include="SDLMain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="tinyxml\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
