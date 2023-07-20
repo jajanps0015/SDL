@@ -42,14 +42,14 @@ namespace Galaga
     Formation::Formation() 
     { 
         mTimer = Timer::Instance(); 
-        mOffsetAmount = 10.0f;
-        mOffsetDelay = 0.4f; 
+        mOffsetAmount = 15.0f;
+        mOffsetDelay = 2.0f; 
         mOffsetTimer = 0.0f; 
         mOffsetCounter = 4; 
         mOffsetDirection = 1; 
         
         mSpreadTimer = 0.0f; 
-        mSpreadDelay = 0.6f; 
+        mSpreadDelay = 3.0f; 
         mSpreadCounter = 0; 
         mSpreadDirection = 1; 
         

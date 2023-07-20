@@ -262,7 +262,7 @@ namespace Galaga
 
         std::cout << "mCurrentWaypoint = " << mCurrentWaypoint
             << "and sPaths[mCurrentPath].size() = " << sPaths[mCurrentPath].size() << std::endl;
-        
+
         if (mCurrentWaypoint >= sPaths[mCurrentPath].size())
         {
             std::cout << "Path complete" << std::endl;
@@ -274,30 +274,13 @@ namespace Galaga
 
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            //if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            //{
-                FlyInComplete();
-            //}
-        }
-
-        else if (mCurrentWaypoint < sPaths[mCurrentPath].size())
-        {
-            Vector2 dist = sPaths[mCurrentPath][mCurrentWaypoint] - Position();
-
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);            
+            FlyInComplete();
         }
         else
         {
-            /*Vector2 dist = WorldFormationPosition() - Position();
+            Vector2 dist = sPaths[mCurrentPath][mCurrentWaypoint] - Position();
 
             Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
-
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
-
-            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
-                FlyInComplete();
-            }*/
         }
     }
 
