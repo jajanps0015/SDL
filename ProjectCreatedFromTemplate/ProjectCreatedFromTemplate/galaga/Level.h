@@ -10,6 +10,9 @@
 #include <galaga/Wasp.h>
 #include <galaga/Boss.h>
 
+#include "tinyxml/tinyxml2.h" 
+
+using namespace tinyxml2;
 using namespace SDLFramework;
 
 namespace Galaga
