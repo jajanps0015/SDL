@@ -70,38 +70,117 @@ namespace Galaga
 
     void Boss::CreateDivePaths()
     {
-        int currentPath = 0;
+		int currentPath = 0;
+		BezierPath* path = new BezierPath();
 
-        BezierPath* path = new BezierPath();
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(-90.0f, -60.0f),
+			Vector2(-90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(-90.0f, 0.0f),
+			Vector2(-90.0f, 60.0f),
+			Vector2(-100.0f, 272.0f),
+			Vector2(-15.0f, 275.0f) }, 15);
+		path->AddCurve({
+			Vector2(-15.0f, 275.0f),
+			Vector2(85.0f, 275.0f),
+			Vector2(85.0f, 125.0f),
+			Vector2(-15.0f, 125.0f) }, 15);
+		path->AddCurve({
+			Vector2(-15.0f, 125.0f),
+			Vector2(-175.0f, 125.0f),
+			Vector2(0.0f, 450.0f),
+			Vector2(125.0f, 450.0f) }, 25);
+		path->AddCurve({
+			Vector2(120.0f, 450.0f),
+			Vector2(160.0f, 450.0f),
+			Vector2(200.0f, 500.0f),
+			Vector2(200.0f, 550.0f) }, 15);
+		path->AddCurve({
+			Vector2(200.0f, 550.0f),
+			Vector2(200.0f, 540.0f),
+			Vector2(200.0f, 810.0f),
+			Vector2(200.0f, 800.0f) }, 15);
 
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -60.0f), Vector2(-90.0f, -60.0f), Vector2(-90.0f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(-90.0f, 0.0f), Vector2(-90.0f, 60.0f), Vector2(-100.0f, 272.0f), Vector2(-15.0f, 275.0f) }, 15);
-        path->AddCurve({ Vector2(-15.0f, 275.0f), Vector2(85.0f, 275.0f), Vector2(85.0f, 125.0f), Vector2(-15.0f, 125.0f) }, 15);
-        path->AddCurve({ Vector2(-15.0f, 125.0f), Vector2(-175.0f, 125.0f), Vector2(0.0f, 450.0f), Vector2(125.0f, 450.0f) }, 25);
-        path->AddCurve({ Vector2(120.0f, 450.0f), Vector2(160.0f, 450.0f), Vector2(200.0f, 500.0f), Vector2(200.0f, 550.0f) }, 15);
-        path->AddCurve({ Vector2(200.0f, 550.0f), Vector2(200.0f, 540.0f), Vector2(200.0f, 810.0f), Vector2(200.0f, 800.0f) }, 15);
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
+		currentPath = 1;
+		path = new BezierPath();
 
-        //****************2********************
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(90.0f, -60.0f),
+			Vector2(90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(90.0f, 0.0f),
+			Vector2(90.0f, 60.0f),
+			Vector2(100.0f, 272.0f),
+			Vector2(15.0f, 275.0f) }, 15);
+		path->AddCurve({
+			Vector2(15.0f, 275.0f),
+			Vector2(-85.0f, 275.0f),
+			Vector2(-85.0f, 125.0f),
+			Vector2(15.0f, 125.0f) }, 15);
+		path->AddCurve({
+			Vector2(15.0f, 125.0f),
+			Vector2(175.0f, 125.0f),
+			Vector2(0.0f, 450.0f),
+			Vector2(-125.0f, 450.0f) }, 25);
+		path->AddCurve({
+			Vector2(-120.0f, 450.0f),
+			Vector2(-160.0f, 450.0f),
+			Vector2(-200.0f, 500.0f),
+			Vector2(-200.0f, 550.0f) }, 15);
+		path->AddCurve({
+			Vector2(-200.0f, 550.0f),
+			Vector2(-200.0f, 540.0f),
+			Vector2(-200.0f, 810.0f),
+			Vector2(-200.0f, 800.0f) }, 15);
 
-        delete path;
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        currentPath = 1;
+		currentPath = 2;
+		path = new BezierPath();
 
-        path = new BezierPath();
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -60.0f), Vector2(90.0f, -60.0f), Vector2(90.0f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(90.0f, 0.0f), Vector2(90.0f, 60.0f), Vector2(100.0f, 272.0f), Vector2(15.0f, 275.0f) }, 15);
-        path->AddCurve({ Vector2(15.0f, 275.0f), Vector2(-85.0f, 275.0f), Vector2(-85.0f, 125.0f), Vector2(15.0f, 125.0f) }, 15);
-        path->AddCurve({ Vector2(15.0f, 125.0f), Vector2(175.0f, 125.0f), Vector2(0.0f, 450.0f), Vector2(-125.0f, 450.0f) }, 25);
-        path->AddCurve({ Vector2(-120.0f, 450.0f), Vector2(-160.0f, 450.0f), Vector2(-200.0f, 500.0f), Vector2(-200.0f, 550.0f) }, 15);
-        path->AddCurve({ Vector2(-200.0f, 550.0f), Vector2(-200.0f, 540.0f), Vector2(-200.0f, 810.0f), Vector2(-200.0f, 800.0f) }, 15);
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(-90.0f, -60.0f),
+			Vector2(-90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(-90.0f, 0.0f),
+			Vector2(-90.0f, 60.0f),
+			Vector2(100.0f, 340.0f),
+			Vector2(100.0f, 400.0f) }, 15);
 
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        delete path;
+		currentPath = 3;
+		path = new BezierPath();
+
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(90.0f, -60.0f),
+			Vector2(90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(90.0f, 0.0f),
+			Vector2(90.0f, 60.0f),
+			Vector2(-100.0f, 340.0f),
+			Vector2(-100.0f, 400.0f) }, 15);
+
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
     }
 
     void Boss::Dive(int type)
@@ -112,40 +191,44 @@ namespace Galaga
 
     void Boss::HandleDiveState()
     {
-        int currentPath = mIndex % sDivePaths.size();
+		if (mCurrentWaypoint < sDivePaths[mCurrentPath].size()) {
+			// follow dive path
+			Vector2 waypointPos = mDiveStartPosition + sDivePaths[mCurrentPath][mCurrentWaypoint];
+			Vector2 dist = waypointPos - Position();
 
-        if (mCaptureDive)
-        {
-            currentPath += 2;
-        }
+			Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+			Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-        if (mCurrentWaypoint < sDivePaths[currentPath].size())
-        {
-            // follow dive path 
-            Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
-            Vector2 dist = waypointPos - Position();
+			if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+				mCurrentWaypoint += 1;
+			}
 
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+			if (mCurrentWaypoint == sDivePaths[mCurrentPath].size()) {
+				if (mCaptureDive) {
+					//mCapturing = true;
+					Rotation(180.0f);
+				}
+				else {
+					Position(Vector2(WorldFormationPosition().x, 20.0f));
+				}
+			}
+		}
+		else {
+			if (!mCaptureDive/* || !mCapturing*/) {
+				// return to formation
+				Vector2 dist = WorldFormationPosition() - Position();
 
-            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
-                mCurrentWaypoint += 1;
-            }
-        }
-        else
-        {
-            // return to formation 
-            Vector2 dist = WorldFormationPosition() - Position();
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+				Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+				Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
-
-            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
-                JoinFormation();
-            }
-        }
+				if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+					JoinFormation();
+				}
+			}
+			else {
+				//HandleCaptureBeam();
+			}
+		}
     }
 
     void Boss::RenderDiveState()

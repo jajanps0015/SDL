@@ -46,40 +46,39 @@ namespace Galaga
 
     void Butterfly::HandleDiveState()
     {
-        int currentPath = mIndex % sDivePaths.size();
-        if (mEscort)
-        {
-            currentPath += 2;
-        }
+		int currentPath = mIndex % 2;
 
+		if (mEscort) {
+			currentPath += 2;
+		}
 
-        if (mCurrentWaypoint < sDivePaths[currentPath].size())
-        {
-            // follow dive path 
-            Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
-            Vector2 dist = waypointPos - Position();
+		if (mCurrentWaypoint < sDivePaths[currentPath].size()) {
+			// follow dive path
+			Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
+			Vector2 dist = waypointPos - Position();
 
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+			Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+			Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
-                mCurrentWaypoint += 1;
-            }
-        }
-        else
-        {
-            // return to formation 
-            Vector2 dist = WorldFormationPosition() - Position();
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+			if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+				mCurrentWaypoint += 1;
+			}
 
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+			if (mCurrentWaypoint == sDivePaths[currentPath].size()) {
+				Position(Vector2(WorldFormationPosition().x, 20.0f));
+			}
+		}
+		else {
+			// return to formation
+			Vector2 dist = WorldFormationPosition() - Position();
 
-            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
-                JoinFormation();
-            }
-        }
+			Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+			Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+
+			if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+				JoinFormation();
+			}
+		}
     }
     
     void Butterfly::HandleDeadState() { }
@@ -117,71 +116,147 @@ namespace Galaga
 
     void Butterfly::CreateDivePaths()
     {
-        // *************** Curve 0 ***************************
-        int currentPath = 0;
+		int currentPath = 0;
+		BezierPath* path = new BezierPath();
 
-        BezierPath* path = new BezierPath();
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -45.0f),
+			Vector2(-60.0f, -45.0f),
+			Vector2(-60.f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(-60.0f, 0.0f),
+			Vector2(-60.0f, 80.0f),
+			Vector2(200.0f, 125.0f),
+			Vector2(200.0f, 200.0f) }, 15);
+		path->AddCurve({
+			Vector2(200.0f, 200.0f),
+			Vector2(200.0f, 275.0f),
+			Vector2(175.0f, 250.0f),
+			Vector2(175.0f, 325.0f) }, 15);
+		path->AddCurve({
+			Vector2(175.0f, 325.0f),
+			Vector2(175.0f, 425.0f),
+			Vector2(375.0f, 425.0f),
+			Vector2(375.0f, 525.0f) }, 15);
+		path->AddCurve({
+			Vector2(375.0f, 525.0f),
+			Vector2(375.0f, 575.0f),
+			Vector2(300.0f, 625.0f),
+			Vector2(300.0f, 775.0f) }, 15);
 
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -45.0f), Vector2(-60.0f, -45.0f), Vector2(-60.f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(-60.0f, 0.0f), Vector2(-60.0f, 80.0f), Vector2(200.0f, 125.0f), Vector2(200.0f, 200.0f) }, 15);
-        path->AddCurve({ Vector2(200.0f, 200.0f), Vector2(200.0f, 275.0f), Vector2(175.0f, 250.0f), Vector2(175.0f, 325.0f) }, 15);
-        path->AddCurve({ Vector2(175.0f, 325.0f), Vector2(175.0f, 425.0f), Vector2(375.0f, 425.0f), Vector2(375.0f, 525.0f) }, 15);
-        path->AddCurve({ Vector2(375.0f, 525.0f), Vector2(375.0f, 575.0f), Vector2(300.0f, 625.0f), Vector2(300.0f, 775.0f) }, 15);
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
+		currentPath = 1;
+		path = new BezierPath();
 
-        // *************** Curve 1 ***************************
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -45.0f),
+			Vector2(60.0f, -45.0f),
+			Vector2(60.f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(60.0f, 0.0f),
+			Vector2(60.0f, 80.0f),
+			Vector2(-200.0f, 125.0f),
+			Vector2(-200.0f, 200.0f) }, 15);
+		path->AddCurve({
+			Vector2(-200.0f, 200.0f),
+			Vector2(-200.0f, 275.0f),
+			Vector2(-175.0f, 250.0f),
+			Vector2(-175.0f, 325.0f) }, 15);
+		path->AddCurve({
+			Vector2(-175.0f, 325.0f),
+			Vector2(-175.0f, 425.0f),
+			Vector2(-375.0f, 425.0f),
+			Vector2(-375.0f, 525.0f) }, 15);
+		path->AddCurve({
+			Vector2(-375.0f, 525.0f),
+			Vector2(-375.0f, 575.0f),
+			Vector2(-300.0f, 625.0f),
+			Vector2(-300.0f, 775.0f) }, 15);
 
-        delete path;
-        currentPath = 1;
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        path = new BezierPath();
+		currentPath = 2;
+		path = new BezierPath();
 
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -45.0f), Vector2(60.0f, -45.0f), Vector2(60.f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(60.0f, 0.0f), Vector2(60.0f, 80.0f), Vector2(-200.0f, 125.0f), Vector2(-200.0f, 200.0f) }, 15);
-        path->AddCurve({ Vector2(-200.0f, 200.0f), Vector2(-200.0f, 275.0f), Vector2(-175.0f, 250.0f), Vector2(-175.0f, 325.0f) }, 15);
-        path->AddCurve({ Vector2(-175.0f, 325.0f), Vector2(-175.0f, 425.0f), Vector2(-375.0f, 425.0f), Vector2(-375.0f, 525.0f) }, 15);
-        path->AddCurve({ Vector2(-375.0f, 525.0f), Vector2(-375.0f, 575.0f), Vector2(-300.0f, 625.0f), Vector2(-300.0f, 775.0f) }, 15);
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(-90.0f, -60.0f),
+			Vector2(-90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(-90.0f, 0.0f),
+			Vector2(-90.0f, 60.0f),
+			Vector2(-100.0f, 272.0f),
+			Vector2(-15.0f, 275.0f) }, 15);
+		path->AddCurve({
+			Vector2(-15.0f, 275.0f),
+			Vector2(85.0f, 275.0f),
+			Vector2(85.0f, 125.0f),
+			Vector2(-15.0f, 125.0f) }, 15);
+		path->AddCurve({
+			Vector2(-15.0f, 125.0f),
+			Vector2(-175.0f, 125.0f),
+			Vector2(0.0f, 450.0f),
+			Vector2(125.0f, 450.0f) }, 25);
+		path->AddCurve({
+			Vector2(120.0f, 450.0f),
+			Vector2(160.0f, 450.0f),
+			Vector2(200.0f, 500.0f),
+			Vector2(200.0f, 550.0f) }, 15);
+		path->AddCurve({
+			Vector2(200.0f, 550.0f),
+			Vector2(200.0f, 540.0f),
+			Vector2(200.0f, 810.0f),
+			Vector2(200.0f, 800.0f) }, 15);
 
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
 
-        // *************** Curve 2 ***************************
-        delete path;
-        currentPath = 2;
+		currentPath = 3;
+		path = new BezierPath();
 
-        path = new BezierPath();
+		path->AddCurve({
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, -60.0f),
+			Vector2(90.0f, -60.0f),
+			Vector2(90.0f, 0.0f) }, 15);
+		path->AddCurve({
+			Vector2(90.0f, 0.0f),
+			Vector2(90.0f, 60.0f),
+			Vector2(100.0f, 272.0f),
+			Vector2(15.0f, 275.0f) }, 15);
+		path->AddCurve({
+			Vector2(15.0f, 275.0f),
+			Vector2(-85.0f, 275.0f),
+			Vector2(-85.0f, 125.0f),
+			Vector2(15.0f, 125.0f) }, 15);
+		path->AddCurve({
+			Vector2(15.0f, 125.0f),
+			Vector2(175.0f, 125.0f),
+			Vector2(0.0f, 450.0f),
+			Vector2(-125.0f, 450.0f) }, 25);
+		path->AddCurve({
+			Vector2(-120.0f, 450.0f),
+			Vector2(-160.0f, 450.0f),
+			Vector2(-200.0f, 500.0f),
+			Vector2(-200.0f, 550.0f) }, 15);
+		path->AddCurve({
+			Vector2(-200.0f, 550.0f),
+			Vector2(-200.0f, 540.0f),
+			Vector2(-200.0f, 810.0f),
+			Vector2(-200.0f, 800.0f) }, 15);
 
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -60.0f), Vector2(-90.0f, -60.0f), Vector2(-90.0f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(-90.0f, 0.0f), Vector2(-90.0f, 60.0f), Vector2(-100.0f, 272.0f), Vector2(-15.0f, 275.0f) }, 15);
-        path->AddCurve({ Vector2(-15.0f, 275.0f), Vector2(85.0f, 275.0f), Vector2(85.0f, 125.0f), Vector2(-15.0f, 125.0f) }, 15);
-        path->AddCurve({ Vector2(-15.0f, 125.0f), Vector2(-175.0f, 125.0f), Vector2(0.0f, 450.0f), Vector2(125.0f, 450.0f) }, 25);
-        path->AddCurve({ Vector2(120.0f, 450.0f), Vector2(160.0f, 450.0f), Vector2(200.0f, 500.0f), Vector2(200.0f, 550.0f) }, 15);
-        path->AddCurve({ Vector2(200.0f, 550.0f), Vector2(200.0f, 540.0f), Vector2(200.0f, 810.0f), Vector2(200.0f, 800.0f) }, 15);
-
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
-
-        //****************3********************
-
-        delete path;
-
-        currentPath = 3;
-
-        path = new BezierPath();
-
-        path->AddCurve({ Vector2(0.0f, 0.0f), Vector2(0.0f, -60.0f), Vector2(90.0f, -60.0f), Vector2(90.0f, 0.0f) }, 15);
-        path->AddCurve({ Vector2(90.0f, 0.0f), Vector2(90.0f, 60.0f), Vector2(100.0f, 272.0f), Vector2(15.0f, 275.0f) }, 15);
-        path->AddCurve({ Vector2(15.0f, 275.0f), Vector2(-85.0f, 275.0f), Vector2(-85.0f, 125.0f), Vector2(15.0f, 125.0f) }, 15);
-        path->AddCurve({ Vector2(15.0f, 125.0f), Vector2(175.0f, 125.0f), Vector2(0.0f, 450.0f), Vector2(-125.0f, 450.0f) }, 25);
-        path->AddCurve({ Vector2(-120.0f, 450.0f), Vector2(-160.0f, 450.0f), Vector2(-200.0f, 500.0f), Vector2(-200.0f, 550.0f) }, 15);
-        path->AddCurve({ Vector2(-200.0f, 550.0f), Vector2(-200.0f, 540.0f), Vector2(-200.0f, 810.0f), Vector2(-200.0f, 800.0f) }, 15);
-
-        sDivePaths.push_back(std::vector<Vector2>());
-        path->Sample(&sDivePaths[currentPath]);
-
-        delete path;
+		sDivePaths.push_back(std::vector<Vector2>());
+		path->Sample(&sDivePaths[currentPath]);
+		delete path;
     }
 
     void Butterfly::Dive(int type)

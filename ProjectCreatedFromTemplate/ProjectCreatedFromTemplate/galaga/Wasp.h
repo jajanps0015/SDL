@@ -45,75 +45,58 @@ namespace Galaga
 
     void Wasp::CreateDivePaths()
     {
-        //********* CURVE 1*******************
         int currentPath = 0;
-
         BezierPath* path = new BezierPath();
 
-        path->AddCurve(
-            {
-                Vector2(0.0f, 0.0f),
-                Vector2(0.0f, -45.0f),
-                Vector2(-60.0f, -45.0f),
-                Vector2(-60.f, 0.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(-60.0f, 0.0f),
-                Vector2(-60.0f, 80.0f),
-                Vector2(0.0f, 150.0f),
-                Vector2(100.0f, 150.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(100.0f, 150.0f),
-                Vector2(250.0f, 150.0f),
-                Vector2(350.0f, 200.0f),
-                Vector2(350.0f, 350.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(350.0f, 350.0f),
-                Vector2(350.0f, 575.0f),
-                Vector2(100.0f, 575.0f),
-                Vector2(100.0f, 350.0f) }, 15);
+        path->AddCurve({
+            Vector2(0.0f, 0.0f),
+            Vector2(0.0f, -45.0f),
+            Vector2(-60.0f, -45.0f),
+            Vector2(-60.f, 0.0f) }, 15);
+        path->AddCurve({
+            Vector2(-60.0f, 0.0f),
+            Vector2(-60.0f, 80.0f),
+            Vector2(0.0f, 150.0f),
+            Vector2(100.0f, 150.0f) }, 15);
+        path->AddCurve({
+            Vector2(100.0f, 150.0f),
+            Vector2(250.0f, 150.0f),
+            Vector2(350.0f, 200.0f),
+            Vector2(350.0f, 350.0f) }, 15);
+        path->AddCurve({
+            Vector2(350.0f, 350.0f),
+            Vector2(350.0f, 575.0f),
+            Vector2(100.0f, 575.0f),
+            Vector2(100.0f, 350.0f) }, 15);
 
         sDivePaths.push_back(std::vector<Vector2>());
         path->Sample(&sDivePaths[currentPath]);
-
-        //********* CURVE 2*******************
         delete path;
+
         currentPath = 1;
 
         path = new BezierPath();
 
-        path->AddCurve(
-            {
-                Vector2(0.0f, 0.0f),
-                Vector2(0.0f, -45.0f),
-                Vector2(60.0f, -45.0f),
-                Vector2(60.f, 0.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(60.0f, 0.0f),
-                Vector2(60.0f, 80.0f),
-                Vector2(0.0f, 150.0f),
-                Vector2(-100.0f, 150.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(-100.0f, 150.0f),
-                Vector2(-250.0f, 150.0f),
-                Vector2(-350.0f, 200.0f),
-                Vector2(-350.0f, 350.0f) }, 15);
-
-        path->AddCurve(
-            {
-                Vector2(-350.0f, 350.0f),
-                Vector2(-350.0f, 575.0f),
-                Vector2(-100.0f, 575.0f),
-                Vector2(-100.0f, 350.0f) }, 15);
+        path->AddCurve({
+            Vector2(0.0f, 0.0f),
+            Vector2(0.0f, -45.0f),
+            Vector2(60.0f, -45.0f),
+            Vector2(60.f, 0.0f) }, 15);
+        path->AddCurve({
+            Vector2(60.0f, 0.0f),
+            Vector2(60.0f, 80.0f),
+            Vector2(0.0f, 150.0f),
+            Vector2(-100.0f, 150.0f) }, 15);
+        path->AddCurve({
+            Vector2(-100.0f, 150.0f),
+            Vector2(-250.0f, 150.0f),
+            Vector2(-350.0f, 200.0f),
+            Vector2(-350.0f, 350.0f) }, 15);
+        path->AddCurve({
+            Vector2(-350.0f, 350.0f),
+            Vector2(-350.0f, 575.0f),
+            Vector2(-100.0f, 575.0f),
+            Vector2(-100.0f, 350.0f) }, 15);
 
         sDivePaths.push_back(std::vector<Vector2>());
         path->Sample(&sDivePaths[currentPath]);
@@ -138,32 +121,28 @@ namespace Galaga
 
     void Wasp::HandleDiveState()
     {
-        int currentPath = mIndex % sDivePaths.size();
+        int currentPath = mIndex % 2;
 
-        if (mCurrentWaypoint < sDivePaths[currentPath].size())
-        {
-            // follow dive path 
+        if (mCurrentWaypoint < sDivePaths[currentPath].size()) {
+            // follow dive path
             Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
             Vector2 dist = waypointPos - Position();
 
             Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
+            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
                 mCurrentWaypoint += 1;
             }
         }
-        else
-        {
-            // return to formation 
+        else {
+            // return to formation
             Vector2 dist = WorldFormationPosition() - Position();
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
 
+            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f)
-            {
+            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
                 JoinFormation();
             }
         }

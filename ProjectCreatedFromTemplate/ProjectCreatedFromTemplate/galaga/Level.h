@@ -209,10 +209,10 @@ namespace Galaga
         mWaspDiveDelay = 2.0f;
         mWaspDiveTimer = 0.0f;
 
-        mDivingBoss = nullptr; 
-        mCaptureDive = true; 
-        mSkipFirstBoss = true; 
-        mBossDiveDelay = 5.0f; 
+        mDivingBoss = nullptr;
+        mCaptureDive = true;
+        mSkipFirstBoss = true;
+        mBossDiveDelay = 5.0f;
         mBossDiveTimer = 0.0f;
     }
 
@@ -264,8 +264,10 @@ namespace Galaga
         {
             HandleCollisions();
 
-            HandleEnemySpawning();
-            HandleEnemyFormation();
+            if (!mSpawningFinished)
+            {
+                HandleEnemySpawning();
+            }
             HandleEnemyDiving();
 
             if (!mChallengeStage)
@@ -490,56 +492,56 @@ namespace Galaga
 
                     for (int i = 0; i <= mCurrentFlyInIndex && child != nullptr; i++)
                     {
-                        if (child != nullptr)
-                        {
-                            std::string type = child->Attribute("type");
-                            int index = child->IntAttribute("index");
-
-                            if (type.compare("Butterfly") == 0)
-                            {
-                                if (!mChallengeStage)
-                                {
-                                    mFormationButterflies[index] = new Butterfly(path, index, false);
-
-                                    std::cout << "Boss " << index << " added" << std::endl;
-                                    mButterflyCount += 1;
-                                }
-                                else
-                                {
-                                    mEnemies.push_back(new Butterfly(path, index, false));
-                                }
-                            }
-                            else if (type.compare("Wasp") == 0)
-                            {
-                                if (!mChallengeStage)
-                                {
-                                    mFormationWasps[index] = new Wasp(path, index, false, false);
-
-                                    std::cout << "Wasp " << index << " added" << std::endl;
-                                    mWaspCount += 1;
-                                }
-                                else
-                                {
-                                    mEnemies.push_back(new Wasp(path, index, false, false));
-                                }
-                            }
-                            else if (type.compare("Boss") == 0)
-                            {
-                                if (!mChallengeStage)
-                                {
-                                    mFormationBosses[index] = new Boss(path, index, false);
-
-                                    std::cout << "Boss " << index << " added" << std::endl;
-                                    mBossCount += 1;
-                                }
-                                else
-                                {
-                                    mEnemies.push_back(new Boss(path, index, false));
-                                }
-                            }
-                            spawned = true;
-                        }
                         child = child->NextSiblingElement();
+                    }
+                    if (child != nullptr)
+                    {
+                        std::string type = child->Attribute("type");
+                        int index = child->IntAttribute("index");
+
+                        if (type.compare("Butterfly") == 0)
+                        {
+                            if (!mChallengeStage)
+                            {
+                                mFormationButterflies[index] = new Butterfly(path, index, false);
+
+                                mButterflyCount += 1;
+                            }
+                            else
+                            {
+                                mEnemies.push_back(new Butterfly(path, index, false));
+                            }
+                        }
+                        else if (type.compare("Wasp") == 0)
+                        {
+                            if (!mChallengeStage)
+                            {
+                                mFormationWasps[index] = new Wasp(path, index, false, false);
+
+                                mWaspCount += 1;
+                            }
+                            else
+                            {
+                                mEnemies.push_back(new Wasp(path, index, false, false));
+                            }
+                        }
+                        else if (type.compare("Boss") == 0)
+                        {
+                            if (!mChallengeStage)
+                            {
+                                mFormationBosses[index] = new Boss(path, index, false);
+
+                                mBossCount += 1;
+                            }
+                            else
+                            {
+                                mEnemies.push_back(new Boss(path, index, false));
+                            }
+                        }
+
+                        spawned = true;
+
+                        std::cout << "Spawned => " << type << "[" << index << "]" << std::endl;
                     }
                 }
                 // extract data 
@@ -568,6 +570,8 @@ namespace Galaga
                     mCurrentFlyInIndex += 1;
                 }
             }
+
+            mSpawnTimer = 0.0f;
         }
     }
 
@@ -578,7 +582,6 @@ namespace Galaga
         if (!mChallengeStage)
         {
 
-            std::cout << "Calling update on separate pointers" << std::endl;
             for (Butterfly* b : mFormationButterflies)
             {
                 if (b != nullptr)
@@ -603,9 +606,8 @@ namespace Galaga
                 }
             }
         }
-        else
+        /*else
         {
-            std::cout << "Calling update on enemy pointers" << std::endl;
             for (Enemy* e : mEnemies)
             {
                 if (e != nullptr)
@@ -613,7 +615,7 @@ namespace Galaga
                     e->Update();
                 }
             }
-        }
+        }*/
 
         if (!mFormation->Locked())
         {
@@ -654,7 +656,7 @@ namespace Galaga
                             mDivingButterfly = mFormationButterflies[i];
                             mDivingButterfly->Dive();
                             mSkipFirstButterfly = !mSkipFirstButterfly;
-                            
+
                             break; // work done, leave loop 
                         }
                     }
@@ -672,109 +674,136 @@ namespace Galaga
             }
         }
 
-        mWaspDiveTimer += mTimer->DeltaTime(); 
-        
-        if (mWaspDiveTimer >= mWaspDiveDelay) 
+        mWaspDiveTimer += mTimer->DeltaTime();
+
+        if (mWaspDiveTimer >= mWaspDiveDelay)
         {
             for (int i = MAX_WASPS - 1; i >= 0; i--) {
-                if (mFormationWasps[i]->CurrentState() == Enemy::Formation) 
+                if (mFormationWasps[i] != nullptr
+                    && mFormationWasps[i]->CurrentState() == Enemy::Formation)
                 {
-                    if (mDivingWasp == nullptr) 
-                    { 
-                        mDivingWasp = mFormationWasps[i]; 
-                        mDivingWasp->Dive(); 
+                    if (mDivingWasp == nullptr)
+                    {
+                        mDivingWasp = mFormationWasps[i];
+                        mDivingWasp->Dive();
                     }
-                    else if (mDivingWasp2 == nullptr) 
-                    { 
-                        mDivingWasp2 = mFormationWasps[i]; 
-                        mDivingWasp2->Dive(); 
-                    } 
+                    else if (mDivingWasp2 == nullptr)
+                    {
+                        mDivingWasp2 = mFormationWasps[i];
+                        mDivingWasp2->Dive();
+                    }
                     break; // work done, leave loop 
-                } 
-            } 
-            
-            mWaspDiveTimer = 0.0f; 
-        } 
-        
-        if (mDivingWasp != nullptr 
-            && mDivingWasp->CurrentState() != Enemy::Diving) 
-        { 
-            mDivingWasp = nullptr; 
-        } 
-        
-        if (mDivingWasp2 != nullptr 
-            && mDivingWasp2->CurrentState() != Enemy::Diving) 
-        { 
-            mDivingWasp2 = nullptr; 
+                }
+            }
+
+            mWaspDiveTimer = 0.0f;
+        }
+
+        if (mDivingWasp != nullptr
+            && mDivingWasp->CurrentState() != Enemy::Diving)
+        {
+            mDivingWasp = nullptr;
+        }
+
+        if (mDivingWasp2 != nullptr
+            && mDivingWasp2->CurrentState() != Enemy::Diving)
+        {
+            mDivingWasp2 = nullptr;
         }
 
         // Boss diving 
-        if (mDivingBoss == nullptr) 
-        { 
-            mBossDiveTimer += mTimer->DeltaTime(); 
-            
-            if (mBossDiveTimer >= mBossDiveDelay) 
+        if (mDivingBoss == nullptr)
+        {
+            mBossDiveTimer += mTimer->DeltaTime();
+
+            if (mBossDiveTimer >= mBossDiveDelay)
             {
-                bool skipped = false; 
-                
-                for (int i = MAX_BOSSES - 1; i >= 0; i--) 
-                { 
-                    if (mFormationBosses[i]->CurrentState() == Enemy::Formation) 
-                    { 
+                bool skipped = false;
+
+                for (int i = MAX_BOSSES - 1; i >= 0; i--)
+                {
+                    if (mFormationBosses[i] != nullptr
+                        && mFormationBosses[i]->CurrentState() == Enemy::Formation)
+                    {
                         if (!mSkipFirstBoss || (mSkipFirstBoss && skipped))
-                        { 
-                            mDivingBoss = mFormationBosses[i]; 
-                            mDivingBoss->Dive(); 
+                        {
+                            mDivingBoss = mFormationBosses[i];
+                            
+                            if (mCaptureDive) {
+                                mDivingBoss->Dive(1);
+                            }
+                            else
+                            {
+                                mDivingBoss->Dive();
 
-                            int index = mDivingBoss->Index(); 
-                            
-                            int firstEscortIndex = (index % 2 == 0) 
-                                ? (index * 2) 
-                                : (index * 2 - 1); 
+                                int index = mDivingBoss->Index();
 
-                            int secondEscortIndex = firstEscortIndex + 4; 
-                            
-                            if (mFormationButterflies[firstEscortIndex]->CurrentState() == Enemy::Formation) 
-                            { 
-                                mFormationButterflies[firstEscortIndex]->Dive(1); 
-                            } 
-                            
-                            if (mFormationButterflies[secondEscortIndex]->CurrentState() == Enemy::Formation) 
-                            { 
-                                mFormationButterflies[secondEscortIndex]->Dive(1); 
+                                int firstEscortIndex = (index % 2 == 0)
+                                    ? (index * 2)
+                                    : (index * 2 - 1);
+
+                                int secondEscortIndex = firstEscortIndex + 4;
+
+                                if (mFormationButterflies[firstEscortIndex] != nullptr
+                                    && mFormationButterflies[firstEscortIndex]->CurrentState() == Enemy::Formation)
+                                {
+                                    mFormationButterflies[firstEscortIndex]->Dive(1);
+                                }
+
+                                if (mFormationButterflies[secondEscortIndex] != nullptr
+                                    && mFormationButterflies[secondEscortIndex]->CurrentState() == Enemy::Formation)
+                                {
+                                    mFormationButterflies[secondEscortIndex]->Dive(1);
+                                }
                             }
 
-                            mSkipFirstBoss = !mSkipFirstBoss; 
-                            
+                            mSkipFirstBoss = !mSkipFirstBoss;
+
+                            mCaptureDive = !mCaptureDive;
                             break; // work done, leave loop 
-                        } 
-                        skipped = true; 
-                    } 
-                } 
-            } 
-        } 
-        else 
-        { 
-            if (mDivingBoss->CurrentState() != Enemy::Diving) 
-            { 
-                mDivingBoss = nullptr; 
+                        }
+                        skipped = true;
+                    }
+                }
+                mBossDiveTimer = 0.0f;
+            }
+        }
+        else
+        {
+            if (mDivingBoss->CurrentState() != Enemy::Diving)
+            {
+                mDivingBoss = nullptr;
             }
         }
     }
 
     bool Level::EnemyFlyingIn()
     {
-        bool flyIn = false;
-        for (auto e : mEnemies)
+        for (Butterfly* b : mFormationButterflies)
         {
-            if (e->CurrentState() == Enemy::FlyIn)
+            if (b != nullptr && b->CurrentState() == Enemy::FlyIn) 
             {
-                flyIn = true;
-                break;
+                return true;
             }
         }
 
-        return flyIn;
+        for (Wasp* w : mFormationWasps) 
+        {
+            if (w != nullptr && w->CurrentState() == Enemy::FlyIn) 
+            {
+                return true;
+            }
+        }
+
+        for (Boss* b : mFormationBosses) 
+        {
+            if (b != nullptr && b->CurrentState() == Enemy::FlyIn) 
+            {
+                return true;
+            }
+        }
+
+        return false;;
     }
 
 }
