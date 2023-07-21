@@ -94,6 +94,17 @@ namespace Galaga
         float mButterflyDiveDelay;
         float mButterflyDiveTimer;
 
+        Wasp* mDivingWasp;
+        Wasp* mDivingWasp2;
+        float mWaspDiveDelay;
+        float mWaspDiveTimer;
+
+        Boss* mDivingBoss;
+        bool mCaptureDive;
+        bool mSkipFirstBoss;
+        float mBossDiveDelay;
+        float mBossDiveTimer;
+
         void HandleEnemySpawning();
         void HandleEnemyFormation();
         void HandleEnemyDiving();
@@ -192,6 +203,17 @@ namespace Galaga
         mSkipFirstButterfly = false;
         mButterflyDiveDelay = 1.0f;
         mButterflyDiveTimer = 0.0f;
+
+        mDivingWasp = nullptr;
+        mDivingWasp2 = nullptr;
+        mWaspDiveDelay = 2.0f;
+        mWaspDiveTimer = 0.0f;
+
+        mDivingBoss = nullptr; 
+        mCaptureDive = true; 
+        mSkipFirstBoss = true; 
+        mBossDiveDelay = 5.0f; 
+        mBossDiveTimer = 0.0f;
     }
 
     Level::~Level()
@@ -466,7 +488,7 @@ namespace Galaga
 
                     XMLElement* child = element->FirstChildElement();
 
-                    for (int i = 0; i < mCurrentFlyInIndex && child != nullptr; i++)
+                    for (int i = 0; i <= mCurrentFlyInIndex && child != nullptr; i++)
                     {
                         if (child != nullptr)
                         {
@@ -478,6 +500,8 @@ namespace Galaga
                                 if (!mChallengeStage)
                                 {
                                     mFormationButterflies[index] = new Butterfly(path, index, false);
+
+                                    std::cout << "Boss " << index << " added" << std::endl;
                                     mButterflyCount += 1;
                                 }
                                 else
@@ -490,6 +514,8 @@ namespace Galaga
                                 if (!mChallengeStage)
                                 {
                                     mFormationWasps[index] = new Wasp(path, index, false, false);
+
+                                    std::cout << "Wasp " << index << " added" << std::endl;
                                     mWaspCount += 1;
                                 }
                                 else
@@ -502,6 +528,8 @@ namespace Galaga
                                 if (!mChallengeStage)
                                 {
                                     mFormationBosses[index] = new Boss(path, index, false);
+
+                                    std::cout << "Boss " << index << " added" << std::endl;
                                     mBossCount += 1;
                                 }
                                 else
@@ -541,49 +569,49 @@ namespace Galaga
                 }
             }
         }
-
-        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_S)
-            && mButterflyCount < MAX_BUTTERFLIES)
-        {
-            mEnemies.push_back(new Butterfly(0, mButterflyCount++, false));
-        }
-
-        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_D) && mWaspCount < MAX_WASPS)
-        {
-            mEnemies.push_back(new Wasp(0, mWaspCount++, false, false));
-        }
-
-        if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_F) && mBossCount < MAX_BOSSES)
-        {
-            mEnemies.push_back(new Boss(0, mBossCount++, false));
-        }
     }
 
     void Level::HandleEnemyFormation()
     {
         mFormation->Update();
 
-        for (Butterfly* b : mFormationButterflies)
+        if (!mChallengeStage)
         {
-            if (b != nullptr)
+
+            std::cout << "Calling update on separate pointers" << std::endl;
+            for (Butterfly* b : mFormationButterflies)
             {
-                b->Update();
+                if (b != nullptr)
+                {
+                    b->Update();
+                }
+            }
+
+            for (Wasp* w : mFormationWasps)
+            {
+                if (w != nullptr)
+                {
+                    w->Update();
+                }
+            }
+
+            for (Boss* b : mFormationBosses)
+            {
+                if (b != nullptr)
+                {
+                    b->Update();
+                }
             }
         }
-
-        for (Wasp* w : mFormationWasps)
+        else
         {
-            if (w != nullptr)
+            std::cout << "Calling update on enemy pointers" << std::endl;
+            for (Enemy* e : mEnemies)
             {
-                w->Update();
-            }
-        }
-
-        for (Boss* b : mFormationBosses)
-        {
-            if (b != nullptr)
-            {
-                b->Update();
+                if (e != nullptr)
+                {
+                    e->Update();
+                }
             }
         }
 
@@ -626,15 +654,16 @@ namespace Galaga
                             mDivingButterfly = mFormationButterflies[i];
                             mDivingButterfly->Dive();
                             mSkipFirstButterfly = !mSkipFirstButterfly;
+                            
                             break; // work done, leave loop 
                         }
-                    } 
+                    }
                     skipped = true;
                 }
+                mButterflyDiveTimer = 0.0f;
             }
 
-            mButterflyDiveTimer = 0.0f;
-        }    
+        }
         else
         {
             if (mDivingButterfly->CurrentState() != Enemy::Diving)
@@ -642,21 +671,110 @@ namespace Galaga
                 mDivingButterfly = nullptr;
             }
         }
-}
 
-bool Level::EnemyFlyingIn()
-{
-    bool flyIn = false;
-    for (auto e : mEnemies)
-    {
-        if (e->CurrentState() == Enemy::FlyIn)
+        mWaspDiveTimer += mTimer->DeltaTime(); 
+        
+        if (mWaspDiveTimer >= mWaspDiveDelay) 
         {
-            flyIn = true;
-            break;
+            for (int i = MAX_WASPS - 1; i >= 0; i--) {
+                if (mFormationWasps[i]->CurrentState() == Enemy::Formation) 
+                {
+                    if (mDivingWasp == nullptr) 
+                    { 
+                        mDivingWasp = mFormationWasps[i]; 
+                        mDivingWasp->Dive(); 
+                    }
+                    else if (mDivingWasp2 == nullptr) 
+                    { 
+                        mDivingWasp2 = mFormationWasps[i]; 
+                        mDivingWasp2->Dive(); 
+                    } 
+                    break; // work done, leave loop 
+                } 
+            } 
+            
+            mWaspDiveTimer = 0.0f; 
+        } 
+        
+        if (mDivingWasp != nullptr 
+            && mDivingWasp->CurrentState() != Enemy::Diving) 
+        { 
+            mDivingWasp = nullptr; 
+        } 
+        
+        if (mDivingWasp2 != nullptr 
+            && mDivingWasp2->CurrentState() != Enemy::Diving) 
+        { 
+            mDivingWasp2 = nullptr; 
+        }
+
+        // Boss diving 
+        if (mDivingBoss == nullptr) 
+        { 
+            mBossDiveTimer += mTimer->DeltaTime(); 
+            
+            if (mBossDiveTimer >= mBossDiveDelay) 
+            {
+                bool skipped = false; 
+                
+                for (int i = MAX_BOSSES - 1; i >= 0; i--) 
+                { 
+                    if (mFormationBosses[i]->CurrentState() == Enemy::Formation) 
+                    { 
+                        if (!mSkipFirstBoss || (mSkipFirstBoss && skipped))
+                        { 
+                            mDivingBoss = mFormationBosses[i]; 
+                            mDivingBoss->Dive(); 
+
+                            int index = mDivingBoss->Index(); 
+                            
+                            int firstEscortIndex = (index % 2 == 0) 
+                                ? (index * 2) 
+                                : (index * 2 - 1); 
+
+                            int secondEscortIndex = firstEscortIndex + 4; 
+                            
+                            if (mFormationButterflies[firstEscortIndex]->CurrentState() == Enemy::Formation) 
+                            { 
+                                mFormationButterflies[firstEscortIndex]->Dive(1); 
+                            } 
+                            
+                            if (mFormationButterflies[secondEscortIndex]->CurrentState() == Enemy::Formation) 
+                            { 
+                                mFormationButterflies[secondEscortIndex]->Dive(1); 
+                            }
+
+                            mSkipFirstBoss = !mSkipFirstBoss; 
+                            
+                            break; // work done, leave loop 
+                        } 
+                        skipped = true; 
+                    } 
+                } 
+            } 
+        } 
+        else 
+        { 
+            if (mDivingBoss->CurrentState() != Enemy::Diving) 
+            { 
+                mDivingBoss = nullptr; 
+            }
         }
     }
 
-    return flyIn;
-}
+    bool Level::EnemyFlyingIn()
+    {
+        bool flyIn = false;
+        for (auto e : mEnemies)
+        {
+            if (e->CurrentState() == Enemy::FlyIn)
+            {
+                flyIn = true;
+                break;
+            }
+        }
+
+        return flyIn;
+    }
 
 }
