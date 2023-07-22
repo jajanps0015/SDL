@@ -309,6 +309,7 @@ namespace Galaga
         if (Active())
         {
             mTexture->Render();
+            RenderStates();
         }
     }
 

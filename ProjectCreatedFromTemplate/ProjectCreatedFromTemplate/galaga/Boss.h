@@ -266,11 +266,12 @@ namespace Galaga
 		if (mCapturing && mCaptureBeam->IsAnimating()) 
 		{ 
 			mCaptureBeam->Render(); 
+			std::cout << "Capture beam render called\n";
 		}
     }
 
 	void Boss::HandleCaptureBeam() 
-	{ 
+	{
 		mCaptureBeam->Update(); 
 		
 		if (!mCaptureBeam->IsAnimating()) 

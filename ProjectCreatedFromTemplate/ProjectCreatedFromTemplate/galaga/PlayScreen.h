@@ -45,6 +45,8 @@ namespace Galaga
 
     PlayScreen::PlayScreen()
     {
+        Graphics::Instance()->SetColor(0, 0, 0, 1);
+        
         mTimer = Timer::Instance();
 
         mAudio = AudioManager::Instance();

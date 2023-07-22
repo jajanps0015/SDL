@@ -30,6 +30,7 @@ namespace SDLFramework
             SDL_Color color);
 
         void DrawLine(float startX, float startY, float endX, float endY);
+        void SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
     private:
         static Graphics* sInstance;
@@ -206,5 +207,10 @@ namespace SDLFramework
         SDL_RenderDrawLine(mRenderer, (int)startX, (int)startY, (int)endX, (int)endY);
 
         SDL_SetRenderDrawColor(mRenderer, color.r, color.g, color.b, color.a);
+    }
+
+    void Graphics::SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+    {
+        SDL_SetRenderDrawColor(mRenderer, r, g, b, a);
     }
 }
