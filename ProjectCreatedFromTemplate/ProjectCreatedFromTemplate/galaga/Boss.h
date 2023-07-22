@@ -1,6 +1,7 @@
 #pragma once
 
 #include <galaga/Enemy.h>
+#include <galaga/CaptureBeam.h>
 
 namespace Galaga
 {
@@ -18,6 +19,12 @@ namespace Galaga
 
         static std::vector<std::vector<Vector2>> sDivePaths;
         bool mCaptureDive;
+
+		int mCurrentPath; 
+		bool mCapturing; 
+		CaptureBeam* mCaptureBeam; 
+		
+		void HandleCaptureBeam();
 
     public:
         Boss(int path, int index, bool challenge);
@@ -61,10 +68,20 @@ namespace Galaga
             mTextures[i]->Parent(this);
             mTextures[i]->Position(Vec2_Zero);
         }
+
+		mCurrentPath = 0; 
+		mCapturing = false; 
+		mCaptureBeam = new CaptureBeam(); 
+		mCaptureBeam->Parent(this); 
+		mCaptureBeam->Position(0.0f, -190.0f); 
+		mCaptureBeam->Rotation(180.0f);
     }
 
     Boss::~Boss()
-    { }
+    {
+		delete mCaptureBeam; 
+		mCaptureBeam = nullptr;
+	}
 
     std::vector<std::vector<Vector2>> Boss::sDivePaths;
 
@@ -187,6 +204,17 @@ namespace Galaga
     {
         mCaptureDive = type != 0;
         Enemy::Dive();
+
+		if (mCaptureDive) 
+		{ 
+			mCapturing = false; 
+			mCurrentPath = 2 + Random::Instance()->RandomRange(0, 1); 
+			mCaptureBeam->ResetAnimation(); 
+		}
+		else 
+		{ 
+			mCurrentPath = mIndex % 2; 
+		}
     }
 
     void Boss::HandleDiveState()
@@ -205,7 +233,7 @@ namespace Galaga
 
 			if (mCurrentWaypoint == sDivePaths[mCurrentPath].size()) {
 				if (mCaptureDive) {
-					//mCapturing = true;
+					mCapturing = true;
 					Rotation(180.0f);
 				}
 				else {
@@ -214,7 +242,7 @@ namespace Galaga
 			}
 		}
 		else {
-			if (!mCaptureDive/* || !mCapturing*/) {
+			if (!mCaptureDive || !mCapturing) {
 				// return to formation
 				Vector2 dist = WorldFormationPosition() - Position();
 
@@ -226,7 +254,7 @@ namespace Galaga
 				}
 			}
 			else {
-				//HandleCaptureBeam();
+				HandleCaptureBeam();
 			}
 		}
     }
@@ -234,6 +262,27 @@ namespace Galaga
     void Boss::RenderDiveState()
     {
         mTexture->Render();
+
+		if (mCapturing && mCaptureBeam->IsAnimating()) 
+		{ 
+			mCaptureBeam->Render(); 
+		}
     }
+
+	void Boss::HandleCaptureBeam() 
+	{ 
+		mCaptureBeam->Update(); 
+		
+		if (!mCaptureBeam->IsAnimating()) 
+		{ 
+			Translate(Vec2_Up * mSpeed * mTimer->DeltaTime(), World); 
+			
+			if (Position().y >= 910.0f) 
+			{ 
+				Position(WorldFormationPosition().x, -20.0f); 
+				mCapturing = false; 
+			} 
+		} 
+	}
 
 }

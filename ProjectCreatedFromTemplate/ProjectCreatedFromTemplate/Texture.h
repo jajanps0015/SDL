@@ -8,16 +8,16 @@ namespace SDLFramework
     class Texture : public GameEntity
     {
     private:
-        SDL_Texture* mTex;
-        Graphics* mGraphics;
-
-        bool mClipped;
 
     protected:
 
         SDL_Rect mSourceRect;
         SDL_Rect mDestinationRect;
         int mWidth; int mHeight;
+        Graphics* mGraphics;
+        SDL_Texture* mTex;
+
+        bool mClipped;
 
     public:
         Texture(std::string filename, bool managed = false);

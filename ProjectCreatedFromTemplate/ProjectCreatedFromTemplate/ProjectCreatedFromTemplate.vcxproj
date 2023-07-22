@@ -197,6 +197,7 @@ xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     <ClInclude Include="galaga\Boss.h" />
     <ClInclude Include="galaga\Bullet.h" />
     <ClInclude Include="galaga\Butterfly.h" />
+    <ClInclude Include="galaga\CaptureBeam.h" />
     <ClInclude Include="galaga\Enemy.h" />
     <ClInclude Include="galaga\Formation.h" />
     <ClInclude Include="galaga\Level.h" />
