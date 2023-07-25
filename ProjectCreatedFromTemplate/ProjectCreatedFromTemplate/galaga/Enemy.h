@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <GameEntity.h>
+#include <managers/PhysicsManager.h>
 #include <Texture.h>
 #include <Timer.h>
 #include <BezierPath.h>
@@ -14,15 +14,19 @@ typedef Galaga::Formation Swarm;
 
 namespace Galaga
 {
-    class Enemy : public GameEntity
+    class Enemy : public PhysEntity
     {
     public:
         enum States { FlyIn, Formation, Diving, Dead };
         enum Types { Butterfly, Wasp, Boss };
 
         static void SetFormation(Swarm* formation);
+        bool InDeathAnimation();
 
     protected:
+
+        static Player* sPlayer;
+
         static std::vector<std::vector<Vector2>> sPaths;
         static Swarm* sFormation;
 
@@ -38,7 +42,9 @@ namespace Galaga
         int mIndex;
         Types mType;
         bool mChallengeStage;
-        Vector2 mDiveStartPosition;
+        Vector2 mDiveStartPosition; 
+        
+        AnimatedTexture* mDeathAnimation;
 
         const float EPSILON = 5.0f;
         float mSpeed;
@@ -64,6 +70,8 @@ namespace Galaga
 
         void RenderStates();
 
+        bool IgnoreCollisions() override;
+
     public:
         static void CreatePaths();
         Enemy(int path, int index, bool challenge);
@@ -78,7 +86,13 @@ namespace Galaga
         int Index();
 
         virtual void Dive(int type = 0);
+
+        static void CurrentPlayer(Player* player);
+
+        virtual void Hit(PhysEntity* other) override;
     };
+
+    Player* Enemy::sPlayer = nullptr;
 
     std::vector<std::vector<Vector2>> Enemy::sPaths;
     Swarm* Enemy::sFormation = nullptr;
@@ -252,6 +266,8 @@ namespace Galaga
             RenderDeadState();
             break;
         }
+
+        PhysEntity::Render();
     }
 
     Enemy::Enemy(int path, int index, bool challenge) :
@@ -275,6 +291,16 @@ namespace Galaga
         mTextures[1] = nullptr;
 
         mSpeed = 20;
+
+        mId = PhysicsManager::Instance()->RegisterEntity(this,
+            PhysicsManager::CollisionLayers::Hostile);
+        mDeathAnimation =
+            new AnimatedTexture("EnemyExplosion.png", 0, 0, 128, 128, 5, 1.0f,
+                Horizontal);
+        mDeathAnimation->Parent(this);
+        mDeathAnimation->Position(Vec2_Zero);
+        mDeathAnimation->SetWrapMode(Once);
+
     }
 
     Enemy::~Enemy()
@@ -289,6 +315,8 @@ namespace Galaga
             delete mTextures[i]; 
             mTextures[i] = nullptr; 
         }
+        delete mDeathAnimation;
+        mDeathAnimation = nullptr;
     }
 
     Enemy::States Enemy::CurrentState()
@@ -415,4 +443,24 @@ namespace Galaga
         mDiveStartPosition = Position();
         mCurrentWaypoint = 1;
     }
+
+    void Enemy::CurrentPlayer(Player* player) {
+        sPlayer = player;
+    }
+
+    bool Enemy::InDeathAnimation() {
+        return mDeathAnimation->IsAnimating();
+    }
+
+    bool Enemy::IgnoreCollisions() {
+        return mCurrentState == Dead;
+    }
+
+    void Enemy::Hit(PhysEntity* other) {
+        if (mCurrentState == Formation) {
+            Parent(nullptr);
+        }
+        mCurrentState = Dead;
+    }
+
 }

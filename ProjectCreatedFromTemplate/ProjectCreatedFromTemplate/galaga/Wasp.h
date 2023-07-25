@@ -25,6 +25,7 @@ namespace Galaga
         static void CreateDivePaths();
 
         Wasp(int path, int index, bool challenge, bool diver);
+        void Hit(PhysEntity* other) override;
 
         ~Wasp();
     };
@@ -174,7 +175,15 @@ namespace Galaga
             mTextures[i]->Parent(this); 
             mTextures[i]->Position(Vec2_Zero); 
         }
+
+        AddCollider(new BoxCollider(mTextures[1]->ScaledDimensions()));
     } 
+
+    void Wasp::Hit(PhysEntity* other) {
+        AudioManager::Instance()->PlaySFX("SFX/WaspDestroyed.wav", 0, 4);
+        sPlayer->AddScore(mCurrentState == Enemy::Formation ? 50 : 100);
+        Enemy::Hit(other);
+    }
     
     Wasp::~Wasp() { }
 }

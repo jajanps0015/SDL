@@ -1,5 +1,5 @@
 #pragma once
-#include <PhysEntity.h>
+#include <managers/PhysicsManager.h>
 #include <Timer.h>
 #include <managers/AudioManager.h>
 #include <managers/InputManager.h>
@@ -81,7 +81,7 @@ namespace Galaga
 
         for (int i = 0; i < MAX_BULLETS; ++i)
         {
-            mBullets[i] = new Bullet();
+            mBullets[i] = new Bullet(true);
         }
 
         mWasHit = false; 

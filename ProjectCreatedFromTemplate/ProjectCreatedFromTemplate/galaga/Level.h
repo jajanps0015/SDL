@@ -304,6 +304,11 @@ namespace Galaga
             mPlayer->Visible(true);
         }
 
+        if (mPlayerHit) {
+            HandlePlayerDeath();
+        }
+
+
     }
 
     void Level::Render()
@@ -400,9 +405,8 @@ namespace Galaga
     {
         if (!mPlayerHit)
         {
-            if (InputManager::Instance()->KeyPressed(SDL_SCANCODE_X))
+            if (mPlayer->WasHit())
             {
-                mPlayer->WasHit();
                 mSideBar->SetShips(mPlayer->Lives());
 
                 mPlayerHit = true;
@@ -535,23 +539,34 @@ namespace Galaga
 
     void Level::HandleEnemyFormation()
     {
+        bool levelCleared = mSpawningFinished;
         mFormation->Update();
 
         for (Butterfly* b : mFormationButterflies) {
             if (b != nullptr) {
                 b->Update();
+                if (b->CurrentState() != Enemy::Dead || b->InDeathAnimation()) {
+                    levelCleared = false;
+                }
+
             }
         }
 
         for (Wasp* w : mFormationWasps) {
             if (w != nullptr) {
                 w->Update();
+                if (w->CurrentState() != Enemy::Dead || w->InDeathAnimation()) {
+                    levelCleared = false;
+                }
             }
         }
 
         for (Boss* b : mFormationBosses) {
             if (b != nullptr) {
-                b->Update();
+                b->Update();;
+                if (b->CurrentState() != Enemy::Dead || b->InDeathAnimation()) {
+                    levelCleared = false;
+                }
             }
         }
 
@@ -567,6 +582,10 @@ namespace Galaga
         }
         else {
             HandleEnemyDiving();
+        }
+
+        if (levelCleared) {
+            mCurrentState == Finished;
         }
     }
 

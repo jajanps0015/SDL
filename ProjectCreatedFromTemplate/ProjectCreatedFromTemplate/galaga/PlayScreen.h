@@ -122,6 +122,7 @@ namespace Galaga
                     mLevelStarted = false; 
                 }
             }
+            mSideBar->SetPlayerScore(mPlayer->Score());
 
             if (mCurrentStage > 0)
             {

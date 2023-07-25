@@ -223,7 +223,6 @@ xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     <ClInclude Include="PhysicsHelper.h" />
     <ClInclude Include="managers\PhysicsManager.h" />
     <ClInclude Include="MathHelper.h" />
-    <ClInclude Include="PhysEntity.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SDLMain.h" />
     <ClInclude Include="Texture.h" />

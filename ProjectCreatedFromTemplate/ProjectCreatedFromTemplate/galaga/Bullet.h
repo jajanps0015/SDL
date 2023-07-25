@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameEntity.h>
+#include <managers/PhysicsManager.h>
 #include <Timer.h>
 #include <Texture.h>
 
@@ -8,15 +8,18 @@ using namespace SDLFramework;
 
 namespace Galaga
 {
-    class Bullet : public GameEntity
+    class Bullet : public PhysEntity
     {
     private:
         static const int OFFSCREEN_BUFFER = 10;
         Timer* mTimer;
         Texture* mTexture;
         float mSpeed;
+
+        bool IgnoreCollisions() override;
+
     public:
-        Bullet();
+        Bullet(bool friendly);
         ~Bullet();
 
         void Fire(Vector2 pos);
@@ -24,9 +27,10 @@ namespace Galaga
 
         void Update() override;
         void Render() override;
+        void Hit(PhysEntity* other) override;
     };
 
-    Bullet::Bullet()
+    Bullet::Bullet(bool friendly)
     {
         mTimer = Timer::Instance();
 
@@ -36,6 +40,16 @@ namespace Galaga
         mSpeed = 200;
 
         Reload();
+
+        AddCollider(new BoxCollider(mTexture->ScaledDimensions()));
+        if (friendly) {
+            mId = PhysicsManager::Instance()->RegisterEntity(this,
+                PhysicsManager::CollisionLayers::FriendlyProjectiles);
+        }
+        else {
+            mId = PhysicsManager::Instance()->RegisterEntity(this,
+                PhysicsManager::CollisionLayers::HostileProjectiles);
+        }
     }
 
     Bullet::~Bullet()
@@ -62,6 +76,7 @@ namespace Galaga
         if (Active())
         {
             mTexture->Render();
+            PhysEntity::Render();
         }
     }
 
@@ -78,4 +93,13 @@ namespace Galaga
             }
         }
     }
+
+    bool Bullet::IgnoreCollisions() {
+        return !Active();
+    }
+    
+    void Bullet::Hit(PhysEntity* other) {
+        Reload();
+    }
+
 }

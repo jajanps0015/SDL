@@ -25,6 +25,7 @@ namespace Galaga
         static void CreateDivePaths();
 
         void Dive(int type = 0) override;
+		void Hit(PhysEntity* other) override;
     };
 
     Vector2 Butterfly::LocalFormationPosition()
@@ -105,6 +106,7 @@ namespace Galaga
             mTextures[i]->Parent(this);
             mTextures[i]->Position(Vec2_Zero);
         }
+		AddCollider(new BoxCollider(mTextures[1]->ScaledDimensions()));
     }
 
     Butterfly::~Butterfly()
@@ -265,4 +267,11 @@ namespace Galaga
 
         Enemy::Dive();
     }
+
+	void Butterfly::Hit(PhysEntity* other) {
+		AudioManager::Instance()->PlaySFX("SFX/ButterflyDestroyed.wav", 0, 3);
+		sPlayer->AddScore(mCurrentState == Enemy::Formation ? 80 : 160);
+		Enemy::Hit(other);
+	}
+
 }
