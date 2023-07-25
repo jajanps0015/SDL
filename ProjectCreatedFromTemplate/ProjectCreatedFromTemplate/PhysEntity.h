@@ -1,14 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <CircleCollider.h>
-#include <PhysicsHelper.h>
-#include <GameEntity.h>
-#include <managers/PhysicsManager.h>
+//#include <vector>
+//#include <CircleCollider.h>
+//#include <PhysicsHelper.h>
+//#include <GameEntity.h>
+//#include <managers/PhysicsManager.h>
 
 namespace SDLFramework
 {
-    class PhysEntity : public GameEntity
+    /*class PhysEntity : public GameEntity
     {
     protected:
         unsigned long mId;
@@ -142,5 +142,5 @@ namespace SDLFramework
     void PhysEntity::Hit(PhysEntity* other)
     {
 
-    }
+    }*/
 }

@@ -16,6 +16,7 @@ namespace SDLFramework
         enum Space { Local = 0, World = 1 };
 
         GameEntity(float x = 0.0f, float y = 0.0f);
+        GameEntity(const Vector2& pos);
         ~GameEntity();
 
         void Position(float x, float y);
@@ -41,6 +42,9 @@ namespace SDLFramework
         mScale(Vec2_One),
         mActive(true),
         mParent(nullptr)
+    {}
+
+    GameEntity::GameEntity(const Vector2& pos) : GameEntity(pos.x, pos.y)
     {}
 
     GameEntity::~GameEntity()
