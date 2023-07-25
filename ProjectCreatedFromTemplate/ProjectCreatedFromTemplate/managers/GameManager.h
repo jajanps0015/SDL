@@ -10,6 +10,7 @@
 #include <managers/AudioManager.h>
 #include <galaga/BackgroundStars.h>
 #include <galaga/ScreenManager.h>
+#include <managers/PhysicsManager.h>
 
 using namespace Galaga;
 
@@ -32,6 +33,7 @@ namespace SDLFramework
         InputManager* mInputManager;
         AudioManager* mAudioManager; 
         ScreenManager* mScreenManager;
+        PhysicsManager* mPhysicsManager;
 
         SDL_Event mEvent;
         const int FRAME_RATE = 60;
@@ -133,6 +135,7 @@ namespace SDLFramework
     void GameManager::LateUpdate()
     {
         mInputManager->UpdatePrevInput();
+        mPhysicsManager->Update();
     }
 
     void GameManager::Render()
@@ -159,13 +162,32 @@ namespace SDLFramework
         mAudioManager = AudioManager::Instance();
         mAssetManager = AssetManager::Instance(); 
         mScreenManager = ScreenManager::Instance();
+        mPhysicsManager = PhysicsManager::Instance();
 
         // verify Graphics module is ready 
         if (!Graphics::Initialized())
         {
             mQuit = true;
         }
-        
+
+        mPhysicsManager->SetLayerCollisionMask(
+            PhysicsManager::CollisionLayers::Friendly,
+            PhysicsManager::CollisionFlags::Hostile |
+            PhysicsManager::CollisionFlags::HostileProjectiles);
+
+        mPhysicsManager->SetLayerCollisionMask(
+            PhysicsManager::CollisionLayers::FriendlyProjectiles,
+            PhysicsManager::CollisionFlags::Hostile);
+
+        mPhysicsManager->SetLayerCollisionMask(
+            PhysicsManager::CollisionLayers::Hostile,
+            PhysicsManager::CollisionFlags::Friendly |
+            PhysicsManager::CollisionFlags::FriendlyProjectiles);
+
+        mPhysicsManager->SetLayerCollisionMask(
+            PhysicsManager::CollisionLayers::HostileProjectiles,
+            PhysicsManager::CollisionFlags::Friendly);
+
         TestStuff();
     }
 
@@ -190,6 +212,9 @@ namespace SDLFramework
         
         ScreenManager::Release(); 
         mScreenManager = nullptr;
+
+        mPhysicsManager->Release();
+        mPhysicsManager = nullptr;
 
         // Quit SDL subsystems 
         SDL_Quit();

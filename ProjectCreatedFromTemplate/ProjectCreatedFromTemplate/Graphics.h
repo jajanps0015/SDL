@@ -136,6 +136,7 @@ namespace SDLFramework
         SDL_Texture* tex = nullptr;
         SDL_Surface* surface = IMG_Load(path.c_str());
 
+
         if (surface == nullptr)
         {
             std::cerr << "Unable to load " << path << ". IMG Error: "

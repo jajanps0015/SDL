@@ -194,6 +194,9 @@ xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="BezierPath.h" />
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="CircleCollider.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="galaga\Boss.h" />
     <ClInclude Include="galaga\Bullet.h" />
     <ClInclude Include="galaga\Butterfly.h" />
@@ -217,7 +220,10 @@ xcopy "$(SolutionDir)Data\*" "$(OutDir)Data\" /y /s</Command>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="managers\InputManager.h" />
     <ClInclude Include="galaga\ScreenManager.h" />
+    <ClInclude Include="PhysicsHelper.h" />
+    <ClInclude Include="managers\PhysicsManager.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="PhysEntity.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SDLMain.h" />
     <ClInclude Include="Texture.h" />

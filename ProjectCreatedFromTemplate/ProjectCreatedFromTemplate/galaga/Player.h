@@ -1,16 +1,17 @@
 #pragma once
-#include <GameEntity.h>
+#include <PhysEntity.h>
 #include <Timer.h>
 #include <managers/AudioManager.h>
 #include <managers/InputManager.h>
 #include <AnimatedTexture.h>
 #include <galaga/Bullet.h>
+#include <managers/PhysicsManager.h>
 
 using namespace SDLFramework;
 
 namespace Galaga
 {
-    class Player : public GameEntity
+    class Player : public PhysEntity
     {
     private:
 
@@ -30,6 +31,8 @@ namespace Galaga
         static const int MAX_BULLETS = 2;
         Bullet* mBullets[MAX_BULLETS];
 
+        bool mWasHit;
+
         void HandleMovement();
         void HandleFiring();
 
@@ -45,7 +48,11 @@ namespace Galaga
         int Score();
         int Lives();
         void AddScore(int change);
-        void WasHit();
+        bool WasHit(); 
+        
+        // Inherited from PhysEntity 
+        bool IgnoreCollisions() override; 
+        void Hit(PhysEntity * other) override;
     };
 
     Player::Player()
@@ -76,6 +83,14 @@ namespace Galaga
         {
             mBullets[i] = new Bullet();
         }
+
+        mWasHit = false; 
+        AddCollider(new BoxCollider(Vector2(16.0f, 67.0f))); 
+        AddCollider(new BoxCollider(Vector2(20.0f, 37.0f)), Vector2(18.0f, 10.0f)); 
+        AddCollider(new BoxCollider(Vector2(20.0f, 37.0f)), Vector2(-18.0f, 10.0f)); 
+        
+        mId = PhysicsManager::Instance()->RegisterEntity
+        (this, PhysicsManager::CollisionLayers::Friendly);
     }
 
     Player::~Player()
@@ -121,15 +136,6 @@ namespace Galaga
     void Player::AddScore(int change)
     {
         mScore += change;
-    }
-
-    void Player::WasHit()
-    {
-        mLives -= 1;
-
-        mAnimating = true;
-        mDeathAnimation->ResetAnimation();
-        mAudio->PlaySFX("SFX/PlayerExplosion.wav", 0, -1);
     }
 
     void Player::HandleMovement()
@@ -213,6 +219,26 @@ namespace Galaga
             {
                 mBullets[i]->Render();
             }
+
+            PhysEntity::Render();
         }
     }
+    
+    bool Player::IgnoreCollisions() {
+        return !mVisible || mAnimating;
+    }
+
+    void Player::Hit(PhysEntity* other) {
+        mLives -= 1;
+        mAnimating = true;
+        mDeathAnimation->ResetAnimation();
+        mAudio->PlaySFX("SFX/PlayerExplosion.wav");
+        mWasHit = true;
+    }
+
+    bool Player::WasHit() 
+    {
+        return mWasHit;
+    }
+
 }

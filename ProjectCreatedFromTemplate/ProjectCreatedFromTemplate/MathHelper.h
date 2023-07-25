@@ -8,6 +8,11 @@ namespace SDLFramework
 #define DEG_TO_RAD PI / 180.0f
 #define RAD_TO_DEG 180.0f / PI
 
+    template<typename T>
+    T clamp(T value, T lower, T upper)
+    {
+        return std::min(upper, std::max(value, lower));
+    }
 
     struct Vector2
     {
@@ -101,6 +106,19 @@ namespace SDLFramework
         return Vector2((float)(vec.x * cos(radAngle) - vec.y * sin(radAngle)), // rotated x position 
             (float)(vec.x * sin(radAngle) + vec.y * cos(radAngle)) // rotated y position 
         );
+    }
+
+    inline float PointToLineDistance(
+        const Vector2& lineStart, 
+        const Vector2& lineEnd, 
+        const Vector2& point)
+    { 
+        Vector2 slope = lineEnd - lineStart;
+
+        float param = clamp(Dot(point - lineStart, slope) / slope.MagnitudeSqr(), 0.0f, 1.0f);
+        Vector2 nearestPoint = lineStart + slope * param;
+
+        return (point - nearestPoint).Magnitude();
     }
 
     const Vector2 Vec2_Zero = { 0.0f, 0.0f };
