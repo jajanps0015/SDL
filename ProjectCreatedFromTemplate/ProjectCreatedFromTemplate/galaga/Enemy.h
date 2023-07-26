@@ -282,10 +282,6 @@ namespace Galaga
 
         Position(sPaths[mCurrentPath][0]);
 
-        /*mTexture = new Texture("AnimatedEnemies.png", 0, 0, 52, 40);
-        mTexture->Parent(this);
-        mTexture->Position(Vec2_Zero);*/
-
         mTexture = nullptr; 
         mTextures[0] = nullptr; 
         mTextures[1] = nullptr;
