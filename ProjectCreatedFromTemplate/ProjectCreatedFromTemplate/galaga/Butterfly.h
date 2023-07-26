@@ -49,34 +49,43 @@ namespace Galaga
     {
 		int currentPath = mIndex % 2;
 
-		if (mEscort) {
+		if (mEscort) 
+		{
 			currentPath += 2;
 		}
 
-		if (mCurrentWaypoint < sDivePaths[currentPath].size()) {
+		if (mCurrentWaypoint < sDivePaths[currentPath].size()) 
+		{
 			// follow dive path
-			Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
+			Vector2 waypointPos = mDiveStartPosition + 
+				sDivePaths[currentPath][mCurrentWaypoint];
+			
 			Vector2 dist = waypointPos - Position();
 
 			Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
 			Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-			if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+			if ((waypointPos - Position()).MagnitudeSqr() 
+				< EPSILON * mSpeed / 25.0f) 
+			{
 				mCurrentWaypoint += 1;
 			}
 
-			if (mCurrentWaypoint == sDivePaths[currentPath].size()) {
+			if (mCurrentWaypoint == sDivePaths[currentPath].size()) 
+			{
 				Position(Vector2(WorldFormationPosition().x, 20.0f));
 			}
 		}
-		else {
+		else 
+		{
 			// return to formation
 			Vector2 dist = WorldFormationPosition() - Position();
 
 			Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
 			Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-			if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+			if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) 
+			{
 				JoinFormation();
 			}
 		}
@@ -268,7 +277,8 @@ namespace Galaga
         Enemy::Dive();
     }
 
-	void Butterfly::Hit(PhysEntity* other) {
+	void Butterfly::Hit(PhysEntity* other) 
+	{
 		AudioManager::Instance()->PlaySFX("SFX/ButterflyDestroyed.wav", 0, 3);
 		sPlayer->AddScore(mCurrentState == Enemy::Formation ? 80 : 160);
 		Enemy::Hit(other);

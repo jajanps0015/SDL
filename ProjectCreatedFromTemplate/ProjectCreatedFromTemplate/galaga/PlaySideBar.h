@@ -266,12 +266,13 @@ namespace Galaga
         {
             mFlagXOffset += width * 0.5f;
         }
-        if
-            (mFlagXOffset > 140)
+        
+        if(mFlagXOffset > 140)
         {
             mFlagYOffset += 66;
             mFlagXOffset = 0;
         }
+
         mRemainingLevels -= value;
         int x = 0;
 

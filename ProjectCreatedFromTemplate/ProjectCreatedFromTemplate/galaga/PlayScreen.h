@@ -103,39 +103,40 @@ namespace Galaga
 
     void PlayScreen::Update()
     {
-        if (mGameStarted)
-        {
-            mPlayer->Update();
-            if (!mLevelStarted)
-            {
-                mLevelStartTimer += mTimer->DeltaTime();
-                if (mLevelStartTimer >= mLevelStartDelay)
-                {
-                    StartNextLevel();
-                }
-            }
-            else
-            {
-                mLevel->Update();
-                if (mLevel->State() == Level::Finished) 
-                { 
-                    mLevelStarted = false; 
-                }
-            }
-            
-            mSideBar->SetPlayerScore(mPlayer->Score());
-            
-            if (mCurrentStage > 0)
-            {
-                mSideBar->Update();
-            }
-        }
-        else
+        if (!mGameStarted)
         {
             if (!Mix_PlayingMusic())
             {
                 mGameStarted = true;
             }
+
+            return;
+        }
+
+        mPlayer->Update();
+        
+        if (!mLevelStarted)
+        {
+            mLevelStartTimer += mTimer->DeltaTime();
+            if (mLevelStartTimer >= mLevelStartDelay)
+            {
+                StartNextLevel();
+            }
+        }
+        else
+        {
+            mLevel->Update();
+            if (mLevel->State() == Level::Finished)
+            {
+                mLevelStarted = false;
+            }
+        }
+
+        mSideBar->SetPlayerScore(mPlayer->Score());
+
+        if (mCurrentStage > 0)
+        {
+            mSideBar->Update();
         }
     }
 
@@ -146,16 +147,14 @@ namespace Galaga
         if (!mGameStarted)
         {
             mStartLabel->Render();
+            return;
         }
 
-        if (mGameStarted)
+        if (mLevelStarted)
         {
-            if (mLevelStarted)
-            {
-                mLevel->Render();
-            }
-            mPlayer->Render();
+            mLevel->Render();
         }
+        mPlayer->Render();
     }
 
     void PlayScreen::StartNewGame()

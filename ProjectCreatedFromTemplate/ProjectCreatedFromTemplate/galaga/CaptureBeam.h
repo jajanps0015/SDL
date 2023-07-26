@@ -41,31 +41,30 @@ namespace Galaga
         if (mCaptureTimer >= mTotalCaptureTime) 
         { 
             mAnimationDone = true; 
+            return;
         } 
-        else 
-        { 
-            mAnimationTimer += mTimer->DeltaTime(); 
-            if (mAnimationTimer >= mAnimationSpeed) 
-            { 
-                mAnimationTimer -= mAnimationSpeed; 
-            } 
-            mSourceRect.x = (int)(mAnimationTimer / mTimePerFrame) * mWidth; 
-            
-            if (mCaptureTimer < 2.0f) 
-            { 
-                float temp = (int)(mCaptureTimer * 3.5f); 
-                mSourceRect.h = (int)(temp / 7.0f * mHeight); 
-            }
-            else if (mCaptureTimer > 4.0f) 
-            { 
-                float temp = (int)((mTotalCaptureTime - mCaptureTimer) * 3.5f); 
-                mSourceRect.h = (int)(temp / 7.0f * mHeight); 
-            }
-            else 
-            { 
-                mSourceRect.h = mHeight; 
-            }
-        } 
+        
+        mAnimationTimer += mTimer->DeltaTime();
+        if (mAnimationTimer >= mAnimationSpeed)
+        {
+            mAnimationTimer -= mAnimationSpeed;
+        }
+        mSourceRect.x = (int)(mAnimationTimer / mTimePerFrame) * mWidth;
+
+        if (mCaptureTimer < 2.0f)
+        {
+            float temp = (int)(mCaptureTimer * 3.5f);
+            mSourceRect.h = (int)(temp / 7.0f * mHeight);
+        }
+        else if (mCaptureTimer > 4.0f)
+        {
+            float temp = (int)((mTotalCaptureTime - mCaptureTimer) * 3.5f);
+            mSourceRect.h = (int)(temp / 7.0f * mHeight);
+        }
+        else
+        {
+            mSourceRect.h = mHeight;
+        }
     }
 
     void CaptureBeam::ResetAnimation() 

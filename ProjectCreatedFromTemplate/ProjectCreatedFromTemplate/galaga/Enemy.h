@@ -339,29 +339,34 @@ namespace Galaga
 
     void Enemy::HandleFlyInState()
     {
-        if (mCurrentWaypoint < sPaths[mCurrentPath].size()) {
+        if (mCurrentWaypoint < sPaths[mCurrentPath].size()) 
+        {
             Vector2 dist = sPaths[mCurrentPath][mCurrentWaypoint] - Position();
 
             Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if ((sPaths[mCurrentPath][mCurrentWaypoint] - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+            if ((sPaths[mCurrentPath][mCurrentWaypoint] - 
+                Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) 
+            {
                 mCurrentWaypoint++;
             }
 
-            if (mCurrentWaypoint >= sPaths[mCurrentPath].size()) {
+            if (mCurrentWaypoint >= sPaths[mCurrentPath].size()) 
+            {
                 PathComplete();
             }
+
+            return;
         }
-        else {
-            Vector2 dist = WorldFormationPosition() - Position();
 
-            Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
-            Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+        Vector2 dist = WorldFormationPosition() - Position();
 
-            if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
-                FlyInComplete();
-            }
+        Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
+        Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
+
+        if (dist.MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+            FlyInComplete();
         }
     }
 

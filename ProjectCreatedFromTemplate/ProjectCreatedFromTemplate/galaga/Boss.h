@@ -226,17 +226,22 @@ namespace Galaga
     {
         if (mCurrentWaypoint < sDivePaths[mCurrentPath].size()) {
             // follow dive path
-            Vector2 waypointPos = mDiveStartPosition + sDivePaths[mCurrentPath][mCurrentWaypoint];
+            Vector2 waypointPos = mDiveStartPosition 
+                + sDivePaths[mCurrentPath][mCurrentWaypoint];
+
             Vector2 dist = waypointPos - Position();
 
             Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+            if ((waypointPos - Position()).MagnitudeSqr() 
+                < EPSILON * mSpeed / 25.0f) 
+            {
                 mCurrentWaypoint += 1;
             }
 
-            if (mCurrentWaypoint == sDivePaths[mCurrentPath].size()) {
+            if (mCurrentWaypoint == sDivePaths[mCurrentPath].size()) 
+            {
                 if (mCaptureDive) {
                     mCapturing = true;
                     Rotation(180.0f);
@@ -247,7 +252,8 @@ namespace Galaga
             }
         }
         else {
-            if (!mCaptureDive || !mCapturing) {
+            if (!mCaptureDive || !mCapturing) 
+            {
                 // return to formation
                 Vector2 dist = WorldFormationPosition() - Position();
 
@@ -258,7 +264,8 @@ namespace Galaga
                     JoinFormation();
                 }
             }
-            else {
+            else 
+            {
                 HandleCaptureBeam();
             }
         }
@@ -271,7 +278,6 @@ namespace Galaga
         if (mCapturing && mCaptureBeam->IsAnimating())
         {
             mCaptureBeam->Render();
-            std::cout << "Capture beam render called\n";
         }
     }
 
@@ -291,22 +297,25 @@ namespace Galaga
         }
     }
 
-    void Boss::Hit(PhysEntity* other) {
-        if (mWasHit) {
+    void Boss::Hit(PhysEntity* other) 
+    {
+        if (mWasHit) 
+        {
             AudioManager::Instance()->PlaySFX("SFX/BossDestroyed.wav", 0, 2);
             sPlayer->AddScore(mCurrentState == Enemy::Formation ? 150 :
                 mCaptureDive ? 400 : 800);
             Enemy::Hit(other);
+
+            return;
         }
-        else {
-            mWasHit = true;
-            SDL_Rect temp = { 0, 64, 60, 64 };
-            mTextures[0]->SetSourceRect(&temp);
-            temp.x = 66;
-            temp.y = 68;
-            mTextures[1]->SetSourceRect(&temp);
-            AudioManager::Instance()->PlaySFX("SFX/BossInjured.wav", 0, 2);
-        }
+
+        mWasHit = true;
+        SDL_Rect temp = { 0, 64, 60, 64 };
+        mTextures[0]->SetSourceRect(&temp);
+        temp.x = 66;
+        temp.y = 68;
+        mTextures[1]->SetSourceRect(&temp);
+        AudioManager::Instance()->PlaySFX("SFX/BossInjured.wav", 0, 2);
     }
 
 }

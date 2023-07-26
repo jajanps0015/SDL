@@ -169,18 +169,22 @@ namespace Galaga
 
     void Player::HandleFiring()
     {
-        if (mInput->KeyPressed(SDL_SCANCODE_SPACE))
+        if (!mInput->KeyPressed(SDL_SCANCODE_SPACE))
         {
-            for (int i = 0; i < MAX_BULLETS; ++i)
-            {
-                if (!mBullets[i]->Active())
-                {
-                    mBullets[i]->Fire(Position());
+            return;
+        }
 
-                    mAudio->PlaySFX("SFX/Fire.wav", 0, -1);
-                    break;
-                }
+        for (int i = 0; i < MAX_BULLETS; ++i)
+        {
+            if (mBullets[i]->Active())
+            {
+                continue;
             }
+
+            mBullets[i]->Fire(Position());
+
+            mAudio->PlaySFX("SFX/Fire.wav", 0, -1);
+            break;
         }
     }
 
@@ -210,24 +214,26 @@ namespace Galaga
 
     void Player::Render()
     {
-        if (mVisible)
+        if (!mVisible)
         {
-            if (mAnimating)
-            {
-                mDeathAnimation->Render();
-            }
-            else
-            {
-                mShip->Render();
-            }
-
-            for (int i = 0; i < MAX_BULLETS; ++i)
-            {
-                mBullets[i]->Render();
-            }
-
-            PhysEntity::Render();
+            return;
         }
+
+        if (mAnimating)
+        {
+            mDeathAnimation->Render();
+        }
+        else
+        {
+            mShip->Render();
+        }
+
+        for (int i = 0; i < MAX_BULLETS; ++i)
+        {
+            mBullets[i]->Render();
+        }
+
+        PhysEntity::Render();
     }
     
     bool Player::IgnoreCollisions() {

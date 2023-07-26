@@ -124,7 +124,8 @@ namespace Galaga
     {
         int currentPath = mIndex % 2;
 
-        if (mCurrentWaypoint < sDivePaths[currentPath].size()) {
+        if (mCurrentWaypoint < sDivePaths[currentPath].size()) 
+        {
             // follow dive path
             Vector2 waypointPos = mDiveStartPosition + sDivePaths[currentPath][mCurrentWaypoint];
             Vector2 dist = waypointPos - Position();
@@ -132,11 +133,13 @@ namespace Galaga
             Translate(dist.Normalized() * mSpeed * mTimer->DeltaTime(), World);
             Rotation(atan2(dist.y, dist.x) * RAD_TO_DEG + 90.0f);
 
-            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) {
+            if ((waypointPos - Position()).MagnitudeSqr() < EPSILON * mSpeed / 25.0f) 
+            {
                 mCurrentWaypoint += 1;
             }
         }
-        else {
+        else 
+        {
             // return to formation
             Vector2 dist = WorldFormationPosition() - Position();
 
@@ -179,9 +182,9 @@ namespace Galaga
         AddCollider(new BoxCollider(mTextures[1]->ScaledDimensions()));
     } 
 
-    void Wasp::Hit(PhysEntity* other) {
+    void Wasp::Hit(PhysEntity* other) 
+    {
         AudioManager::Instance()->PlaySFX("SFX/WaspDestroyed.wav", 0, 4);
-
 
         if (sPlayer)
         {

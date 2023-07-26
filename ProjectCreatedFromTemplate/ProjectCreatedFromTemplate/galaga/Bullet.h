@@ -42,14 +42,10 @@ namespace Galaga
         Reload();
 
         AddCollider(new BoxCollider(mTexture->ScaledDimensions()));
-        if (friendly) {
-            mId = PhysicsManager::Instance()->RegisterEntity(this,
-                PhysicsManager::CollisionLayers::FriendlyProjectiles);
-        }
-        else {
-            mId = PhysicsManager::Instance()->RegisterEntity(this,
-                PhysicsManager::CollisionLayers::HostileProjectiles);
-        }
+        mId = PhysicsManager::Instance()->RegisterEntity(this,
+            friendly
+            ? PhysicsManager::CollisionLayers::FriendlyProjectiles
+            : PhysicsManager::CollisionLayers::HostileProjectiles);
     }
 
     Bullet::~Bullet()
@@ -85,20 +81,20 @@ namespace Galaga
         if (Active())
         {
             Translate(Vec2_Down * mSpeed * mTimer->DeltaTime());
-            Vector2 pos = Position(); 
-            
-            if (pos.y < -OFFSCREEN_BUFFER) 
-            { 
-                Reload(); 
+            Vector2 pos = Position();
+
+            if (pos.y < -OFFSCREEN_BUFFER)
+            {
+                Reload();
             }
         }
     }
 
-    bool Bullet::IgnoreCollisions() 
+    bool Bullet::IgnoreCollisions()
     {
         return !Active();
     }
-    
+
     void Bullet::Hit(PhysEntity* other) {
         Reload();
     }

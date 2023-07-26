@@ -310,7 +310,8 @@ namespace Galaga
             mPlayer->Visible(true);
         }
 
-        if (mPlayerHit) {
+        if (mPlayerHit) 
+        {
             HandlePlayerDeath();
         }
     }
@@ -330,52 +331,52 @@ namespace Galaga
             {
                 mReadyLabel->Render();
             }
+
+            return;
         }
-        else
+
+        if (mPlayerHit)
         {
-            if (mPlayerHit)
+            if (mRespawnTimer >= mRespawnLabelOnScreen)
             {
-                if (mRespawnTimer >= mRespawnLabelOnScreen)
-                {
-                    mReadyLabel->Render();
-                }
-
-                if (mGameOverTimer >= mGameOverLabelOnScreen)
-                {
-                    mGameOverLabel->Render();
-                }
+                mReadyLabel->Render();
             }
 
-            if (mChallengeStage)
+            if (mGameOverTimer >= mGameOverLabelOnScreen)
             {
-                for (auto e : mEnemies)
-                {
-                    e->Render();
-                }
-                return;
+                mGameOverLabel->Render();
             }
-            for (Butterfly* b : mFormationButterflies)
-            {
-                if (b != nullptr)
-                {
-                    b->Render();
-                }
-            }
+        }
 
-            for (Wasp* w : mFormationWasps)
+        if (mChallengeStage)
+        {
+            for (auto e : mEnemies)
             {
-                if (w != nullptr)
-                {
-                    w->Render();
-                }
+                e->Render();
             }
-
-            for (Boss* b : mFormationBosses)
+            return;
+        }
+        for (Butterfly* b : mFormationButterflies)
+        {
+            if (b != nullptr)
             {
-                if (b != nullptr)
-                {
-                    b->Render();
-                }
+                b->Render();
+            }
+        }
+
+        for (Wasp* w : mFormationWasps)
+        {
+            if (w != nullptr)
+            {
+                w->Render();
+            }
+        }
+
+        for (Boss* b : mFormationBosses)
+        {
+            if (b != nullptr)
+            {
+                b->Render();
             }
         }
     }

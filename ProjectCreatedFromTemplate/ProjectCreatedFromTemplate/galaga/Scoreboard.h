@@ -47,21 +47,20 @@ namespace Galaga
                 mScore.push_back(new Texture("0", "emulogic.ttf", size, mColor));
                 mScore[i]->Parent(this); 
                 mScore[i]->Position(Vector2(-size * i, 0.0f));
-            } 
+            }
+
+            return;
         }
-        else 
-        { 
-            std::string str = std::to_string(score); 
-            
-            unsigned lastIndex = (unsigned)str.length() - 1; 
-            
-            for (unsigned i = 0; i <= lastIndex; i++) 
-            { 
-                mScore.push_back(new Texture(str.substr(i, 1), "emulogic.ttf", size, mColor));
-                mScore[i]->Parent(this); 
-                
-                mScore[i]->Position(Vector2(-size * (lastIndex - i), 0.0f));
-            } 
+        std::string str = std::to_string(score);
+
+        unsigned lastIndex = (unsigned)str.length() - 1;
+
+        for (unsigned i = 0; i <= lastIndex; i++)
+        {
+            mScore.push_back(new Texture(str.substr(i, 1), "emulogic.ttf", size, mColor));
+            mScore[i]->Parent(this);
+
+            mScore[i]->Position(Vector2(-size * (lastIndex - i), 0.0f));
         }
     }
 
