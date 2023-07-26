@@ -181,7 +181,12 @@ namespace Galaga
 
     void Wasp::Hit(PhysEntity* other) {
         AudioManager::Instance()->PlaySFX("SFX/WaspDestroyed.wav", 0, 4);
-        sPlayer->AddScore(mCurrentState == Enemy::Formation ? 50 : 100);
+
+
+        if (sPlayer)
+        {
+            sPlayer->AddScore(mCurrentState == Enemy::Formation ? 50 : 100);
+        }
         Enemy::Hit(other);
     }
     

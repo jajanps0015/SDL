@@ -94,7 +94,8 @@ namespace Galaga
         }
     }
 
-    bool Bullet::IgnoreCollisions() {
+    bool Bullet::IgnoreCollisions() 
+    {
         return !Active();
     }
     

@@ -5,7 +5,7 @@
 #include <managers/InputManager.h>
 #include <AnimatedTexture.h>
 #include <galaga/Bullet.h>
-#include <managers/PhysicsManager.h>
+#include <galaga/ScreenManager.h>
 
 using namespace SDLFramework;
 
@@ -35,6 +35,8 @@ namespace Galaga
 
         void HandleMovement();
         void HandleFiring();
+
+        float mCollisionTimer;
 
     public:
         Player();
@@ -91,6 +93,8 @@ namespace Galaga
         
         mId = PhysicsManager::Instance()->RegisterEntity
         (this, PhysicsManager::CollisionLayers::Friendly);
+
+        mCollisionTimer = 0;
     }
 
     Player::~Player()
@@ -193,6 +197,8 @@ namespace Galaga
             {
                 HandleMovement();
                 HandleFiring();
+
+                mCollisionTimer += mTimer->DeltaTime();
             }
         }
 
@@ -225,7 +231,9 @@ namespace Galaga
     }
     
     bool Player::IgnoreCollisions() {
-        return !mVisible || mAnimating;
+        return !mVisible
+            || mAnimating
+            || mCollisionTimer < 10;
     }
 
     void Player::Hit(PhysEntity* other) {

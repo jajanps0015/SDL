@@ -214,6 +214,8 @@ namespace Galaga
         mSkipFirstBoss = true;
         mBossDiveDelay = 5.0f;
         mBossDiveTimer = 0.0f;
+
+        Enemy::CurrentPlayer(mPlayer);
     }
 
     Level::~Level()

@@ -122,8 +122,9 @@ namespace Galaga
                     mLevelStarted = false; 
                 }
             }
+            
             mSideBar->SetPlayerScore(mPlayer->Score());
-
+            
             if (mCurrentStage > 0)
             {
                 mSideBar->Update();
@@ -163,7 +164,7 @@ namespace Galaga
         mPlayer = new Player();
 
         mPlayer->Parent(this);
-        mPlayer->Position(Graphics::SCREEN_WIDTH * 0.4f, Graphics::SCREEN_HEIGHT * 0.8f);
+        mPlayer->Position(Graphics::SCREEN_WIDTH * 0.9f, Graphics::SCREEN_HEIGHT * 0.8f);
         mPlayer->Active(false);
 
         mSideBar->SetHighScore(30000);
