@@ -108,23 +108,6 @@ namespace SDLFramework
         mInputManager->Update(); 
         
         mScreenManager->Update();
-        
-        if (mInputManager->KeyPressed(SDL_SCANCODE_SPACE))
-        {
-            std::cout << "Space pressed!" << std::endl;
-        }
-        if (mInputManager->KeyReleased(SDL_SCANCODE_SPACE))
-        {
-            std::cout << "Space released!" << std::endl;
-        }
-        if (mInputManager->MouseButtonPressed(InputManager::Left))
-        {
-            std::cout << "Left mouse button pressed!" << std::endl;
-        }
-        if (mInputManager->MouseButtonReleased(InputManager::Left))
-        {
-            std::cout << "Left mouse button released!" << std::endl;
-        }
 
         if (mInputManager->KeyDown(SDL_SCANCODE_1)) 
         { 
